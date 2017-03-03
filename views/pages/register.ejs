@@ -1,0 +1,24 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <h1>EFL 2017 Registration page</h1>
+  <h2><%= errmsg %></h2>
+  <form action="/" method="post" onsubmit="return confirm('Have you entered everything in correctly?')">
+   Team:&nbsp;
+   <select name="shortName">
+   <% for (var i = 0; i < teams.length; i++) { %>
+    <% if (teams[i].password === 'temp') { %>
+    <option value="<%= teams[i].shortName %>"><%= teams[i].name %></option>
+   <% } } %>
+   </select><br>     
+   Login:&nbsp;&nbsp;
+   <input type="text" name="login"><br>
+   Password:&nbsp;&nbsp;
+   <input type="password" name="password"><br>
+   Retype Password:&nbsp;&nbsp;
+   <input type="password" name="password2"><br>
+   <input type="submit" name="submit" value="Register">
+  </form>
+ </body>
+</html>
