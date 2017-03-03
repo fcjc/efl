@@ -38,7 +38,9 @@ module.exports = function(app) {
  app.get('/', function(req, res) {
   res.render('pages/register', {teams: TeamData, errmsg: ''});
  });
- app.post('/', urlencodedParser, function(req, res) {
+
+
+app.post('/', urlencodedParser, function(req, res) {
   var message;
   if (req.body.password !== req.body.password2) 
    message = 'Your passwords did not match';
@@ -58,7 +60,19 @@ module.exports = function(app) {
    });
   }
  });
- app.get('/auction_board.html', function (req, res) {
+
+app.get('/login.html', function(req, res) {
+ res.render('pages/login');
+});
+
+app.post('/login.html', urlencodedParser, function(req, res) {
+ Team.findOne({ login: req.body.login }, function(err, data) {
+  console.log(data);
+ });
+ res.render('pages/login');
+});
+
+app.get('/auction_board.html', function (req, res) {
   res.render('pages/auction_board');
  });
 
