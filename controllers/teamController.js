@@ -55,21 +55,43 @@ app.post('/', urlencodedParser, function(req, res) {
   } else {
    bcrypt.hash(req.body.password, null, null, function(err, bcryptedPassword) {
     Team.where({ shortName: req.body.shortName }).update({ $set: {login: req.body.login, password: bcryptedPassword, lastLogin: Date()} }, function (err, data) {
-     res.render('pages/login');
+     Team.find({}, function(err, data) {
+      TeamData = data;
+     });
+     res.render('pages/login', {errmsg: ''});
     });
    });
   }
  });
 
 app.get('/login.html', function(req, res) {
- res.render('pages/login');
+ if (req.cookies.team) {
+  res.send('already logged in');
+  return;
+ }
+ res.render('pages/login', {errmsg: ''});
 });
 
 app.post('/login.html', urlencodedParser, function(req, res) {
  Team.findOne({ login: req.body.login }, function(err, data) {
-  console.log(data);
+  if (!data) {
+   res.render('pages/login', {errmsg: 'login id not found'});
+   return;
+  }
+  bcrypt.compare(req.body.password, data.password, function(err, passRes) {
+   if (err) {
+    console.log(err);
+   }
+   if (passRes) {
+    //console.log("password is correct");
+    res.cookie('team', data.shortName, {expires: new Date() + 9999999999, maxAge: 9999999999});
+    res.writeHead(301, {Location: '/login.html'});
+    res.end();
+   } else {
+    res.render('pages/login', {errmsg: 'incorrect'});
+   }
+  });
  });
- res.render('pages/login');
 });
 
 app.get('/auction_board.html', function (req, res) {

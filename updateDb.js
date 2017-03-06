@@ -40,7 +40,7 @@ var Team = mongoose.model('Team', TeamSchema);
 });
 */
 
-/*Team.where({ name: 'Sailors' }).update({ $set: {owner: 'Johnny'} }, function (err, data) {
+Team.where({ name: 'Sailors' }).update({ $set: {password: 'temp'} }, function (err, data) {
  console.log(data);
 });
-*/
+

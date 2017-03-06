@@ -8,7 +8,7 @@
    Team:&nbsp;
    <select name="shortName">
    <% for (var i = 0; i < teams.length; i++) { %>
-    <% if (teams[i].password === 'temp') { %>
+    <% if (teams[i].password) { %>
     <option value="<%= teams[i].shortName %>"><%= teams[i].name %></option>
    <% } } %>
    </select><br>     
