@@ -66,8 +66,8 @@ app.post('/', urlencodedParser, function(req, res) {
 
 app.get('/login.html', function(req, res) {
  if (req.cookies.team) {
-  res.send('already logged in');
-  return;
+  res.writeHead(301, {Location: '/auction_board.html'});
+  res.end();
  }
  res.render('pages/login', {errmsg: ''});
 });

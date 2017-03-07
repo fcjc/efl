@@ -25,6 +25,33 @@ var TeamSchema = new mongoose.Schema({
 });
 var Team = mongoose.model('Team', TeamSchema);
 
+var BidSchema = new mongoose.Schema({
+ pos: String,
+ secPos: String,
+ thirdPos: String,
+ firstName: String,
+ lastName: String,
+ bid: Number,
+ team: String,
+ nominate: Boolean,
+ close: Boolean
+});
+var Bid = mongoose.model('Bid', BidSchema);
+
+var addBid = new Bid({
+ pos: '1B',
+ secPos: '',
+ thirdPos: '',
+ firstName: 'Willie',
+ lastName: 'McCovey',
+ bid: '28',
+ team: 'Fog',
+ nominate: 0,
+ close: 0,
+}).save(function (err) {
+ console.log('player added');
+});
+
 /*var TeamOne = new Team({
  name: 'Minor League',
  owner: 'Peti',
@@ -40,7 +67,8 @@ var Team = mongoose.model('Team', TeamSchema);
 });
 */
 
-Team.where({ name: 'Sailors' }).update({ $set: {password: 'temp'} }, function (err, data) {
+/*Team.where({ name: 'Sailors' }).update({ $set: {password: 'temp'} }, function (err, data) {
  console.log(data);
 });
+*/
 
