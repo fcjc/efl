@@ -1,0 +1,43 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <h1>EFL 2017 Nomination page</h1>
+  <form action="/nominate.html" method="post">
+   <input name="team" type="hidden" value="<%= teamShort %>">
+  Pos:&nbsp;
+  <select name="pos">
+   <option value="C">C</option>
+   <option value="1B">1B</option>
+   <option value="2B">2B</option>
+   <option value="3B">3B</option>
+   <option value="SS">SS</option>
+   <option value="OF">OF</option>
+   <option value="DH">DH</option>
+   <option value="P">P</option>
+  </select>
+  <br>
+  Secondary Postion:&nbsp;
+  <select name="posSec">
+   <option value="">-</option>
+   <option value="C">C</option>
+   <option value="1B">1B</option>
+   <option value="2B">2B</option>
+   <option value="3B">3B</option>
+   <option value="SS">SS</option>
+   <option value="OF">OF</option>
+  </select>
+  <br>
+  First Name:&nbsp;
+  <input type="text" name="firstName">
+  <br>
+  Last Name:&nbsp;
+  <input type="text" name="lastName">
+  <br>
+  Bid:&nbsp;
+  <input type="text" name="bid">
+  <br>
+  <input type="submit" name="submit" value="Nominate Player">
+  </form>
+ </body>
+</html>

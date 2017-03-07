@@ -1,0 +1,35 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <h1>EFL 2017 Bidding page</h1>
+  <form action="/bid.html" method="post">
+   <input name="team" type="hidden" value="<%= teamShort %>">
+
+  Player:&nbsp;&nbsp;
+   <select name="player">
+  <% var posDisp;
+  var curPlayer;
+  var nextPlayer;
+  %>
+  <% for (var i = 0; i < BidData.length; i++) { %>
+    <% if (BidData[i].secPos) {
+     posDisp = BidData[i].pos + '/' + BidData[i].secPos;
+    } else {
+     posDisp = BidData[i].pos;
+    } %>
+    <% curPlayer = posDisp + ' ' + BidData[i].firstName + ' ' + BidData[i].lastName; %>
+    <% if (curPlayer !== nextPlayer) { %>
+      <option value="<%= curPlayer %>"><%= curPlayer %> - <%= BidData[i].bid %></option>
+    <% } %>
+    <% nextPlayer = curPlayer %>
+  <% } %>
+   </select>
+
+
+   Bid:&nbsp;&nbsp;
+   <input type="text" name="bid"><br>
+   <input type="submit" name="submit" value="Place Bid">
+  </form>
+ </body>
+</html>

@@ -40,7 +40,7 @@ module.exports = function(app) {
  });
 
 
-app.post('/', urlencodedParser, function(req, res) {
+ app.post('/', urlencodedParser, function(req, res) {
   var message;
   if (req.body.password !== req.body.password2) 
    message = 'Your passwords did not match';
@@ -64,39 +64,34 @@ app.post('/', urlencodedParser, function(req, res) {
   }
  });
 
-app.get('/login.html', function(req, res) {
- if (req.cookies.team) {
-  res.writeHead(301, {Location: '/auction_board.html'});
-  res.end();
- }
- res.render('pages/login', {errmsg: ''});
-});
-
-app.post('/login.html', urlencodedParser, function(req, res) {
- Team.findOne({ login: req.body.login }, function(err, data) {
-  if (!data) {
-   res.render('pages/login', {errmsg: 'login id not found'});
-   return;
+ app.get('/login.html', function(req, res) {
+  if (req.cookies.team) {
+   res.writeHead(301, {Location: '/auction_board.html'});
+   res.end();
   }
-  bcrypt.compare(req.body.password, data.password, function(err, passRes) {
-   if (err) {
-    console.log(err);
-   }
-   if (passRes) {
-    //console.log("password is correct");
-    res.cookie('team', data.shortName, {expires: new Date() + 9999999999, maxAge: 9999999999});
-    res.writeHead(301, {Location: '/login.html'});
-    res.end();
-   } else {
-    res.render('pages/login', {errmsg: 'incorrect'});
-   }
-  });
+  res.render('pages/login', {errmsg: ''});
  });
-});
 
-app.get('/auction_board.html', function (req, res) {
-  res.render('pages/auction_board');
+ app.post('/login.html', urlencodedParser, function(req, res) {
+  Team.findOne({ login: req.body.login }, function(err, data) {
+   if (!data) {
+    res.render('pages/login', {errmsg: 'login id not found'});
+    return;
+   }
+   bcrypt.compare(req.body.password, data.password, function(err, passRes) {
+    if (err) {
+     console.log(err);
+    }
+    if (passRes) {
+     //console.log("password is correct");
+     res.cookie('team', data.shortName, {expires: new Date() + 9999999999, maxAge: 9999999999});
+     res.writeHead(301, {Location: '/login.html'});
+     res.end();
+    } else {
+     res.render('pages/login', {errmsg: 'incorrect'});
+    }
+   });
+  });
  });
 
 };
-

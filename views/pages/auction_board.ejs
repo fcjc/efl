@@ -1,10 +1,26 @@
 <html>
  <head>
+  <link href="/styles.css" rel="stylesheet" type="text/css">
  </head>
  <body>
   <h1>Auction Board</h1>
-  <script>
-   document.write('<br>Hello!!');
-  </script>
+  <% var posDisp %>
+  <% var curPlayer %>
+  <% var nextPlayer %>
+  <div>
+  <% for (var i = 0; i < BidData.length; i++) { %>
+    <% if (BidData[i].secPos) { 
+     posDisp = BidData[i].pos + '/' + BidData[i].secPos;
+    } else {
+     posDisp = BidData[i].pos;
+    } %>
+    <% curPlayer = posDisp + ' ' + BidData[i].firstName + ' ' + BidData[i].lastName; %>
+    <% if (curPlayer !== nextPlayer) { %>
+     </div><div><%= curPlayer %>
+    <% } %>
+    <span class="bid">(<%= BidData[i].lastName %>) <%= BidData[i].team %> - <%= BidData[i].bid %></span>
+    <% nextPlayer = curPlayer %>
+  <% } %>
+  </div>
  </body>
 </html>

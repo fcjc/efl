@@ -1,0 +1,8 @@
+DIV {
+ font-size: 20px;
+ display: flex;
+ flex-direction: column;
+ border: 1px solid #666;
+ float: left;
+ padding: 5px;
+}

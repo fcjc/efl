@@ -33,6 +33,7 @@ var BidSchema = new mongoose.Schema({
  lastName: String,
  bid: Number,
  team: String,
+ bidTime: Date,
  nominate: Boolean,
  close: Boolean
 });
@@ -44,8 +45,9 @@ var addBid = new Bid({
  thirdPos: '',
  firstName: 'Willie',
  lastName: 'McCovey',
- bid: '28',
- team: 'Fog',
+ bid: '30',
+ team: 'ACE',
+ bidTime: new Date,
  nominate: 0,
  close: 0,
 }).save(function (err) {
