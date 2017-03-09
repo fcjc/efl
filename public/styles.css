@@ -6,3 +6,8 @@ DIV {
  float: left;
  padding: 5px;
 }
+
+INPUT.bid {
+ width: 60px;
+}
+

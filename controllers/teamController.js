@@ -36,7 +36,12 @@ Team.find({}, function(err, data) {
 module.exports = function(app) {
 
  app.get('/', function(req, res) {
-  res.render('pages/register', {teams: TeamData, errmsg: ''});
+  if (req.cookies.team) {
+   return res.redirect('/auction_board.html');
+  }
+  Team.find({}, function(err, data) {
+   res.render('pages/register', {teams: data, errmsg: ''});
+  });
  });
 
 
@@ -46,28 +51,26 @@ module.exports = function(app) {
    message = 'Your passwords did not match';
   if (!req.body.login || !req.body.password)
    message = 'Please fill out all fields';
-  for (var i = 0; i < TeamData.length; i++) {
-   if (req.body.login === TeamData[i].login)
-    message = 'Login ID already exists';
-  }
-  if (message) {
-   res.render('pages/register', {teams: TeamData, errmsg: message});
-  } else {
-   bcrypt.hash(req.body.password, null, null, function(err, bcryptedPassword) {
-    Team.where({ shortName: req.body.shortName }).update({ $set: {login: req.body.login, password: bcryptedPassword, lastLogin: Date()} }, function (err, data) {
-     Team.find({}, function(err, data) {
-      TeamData = data;
+  Team.find({}, function(err, data) {
+   for (var i = 0; i < data.length; i++) {
+    if (req.body.login === data[i].login)
+     message = 'Login ID already exists';
+   }
+   if (message) {
+    res.render('pages/register', {teams: data, errmsg: message});
+   } else {
+    bcrypt.hash(req.body.password, null, null, function(err, bcryptedPassword) {
+     Team.where({ shortName: req.body.shortName }).update({ $set: {login: req.body.login, password: bcryptedPassword, lastLogin: Date()} }, function (err, data) {
+      res.render('pages/login', {errmsg: ''});
      });
-     res.render('pages/login', {errmsg: ''});
     });
-   });
-  }
+   }
+  });
  });
 
  app.get('/login.html', function(req, res) {
   if (req.cookies.team) {
-   res.writeHead(301, {Location: '/auction_board.html'});
-   res.end();
+   return res.redirect('/auction_board.html');
   }
   res.render('pages/login', {errmsg: ''});
  });
@@ -85,10 +88,9 @@ module.exports = function(app) {
     if (passRes) {
      //console.log("password is correct");
      res.cookie('team', data.shortName, {expires: new Date() + 9999999999, maxAge: 9999999999});
-     res.writeHead(301, {Location: '/login.html'});
-     res.end();
+     return res.redirect('/auction_board.html');
     } else {
-     res.render('pages/login', {errmsg: 'incorrect'});
+     res.render('pages/login', {errmsg: 'password incorrect'});
     }
    });
   });

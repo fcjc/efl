@@ -43,8 +43,7 @@ module.exports = function(app) {
    if (req.cookies.team) {
     res.render('pages/bid', {BidData: data, teamShort: req.cookies.team});
    } else {
-    res.writeHead(301, {Location: '/login.html'});
-    res.end();
+    return res.redirect('/login.html');
    }
 
   })
@@ -69,8 +68,7 @@ module.exports = function(app) {
    console.log(req.body.player + " added");
   });
 
-  res.writeHead(301, {Location: '/auction_board.html'});
-  res.end();
+  return res.redirect('/auction_board.html');
   //res.render('pages/bid_confirm', {Player: req.body.player, Team: req.body.team, Bid: req.body.bid});
  });
 
@@ -79,8 +77,7 @@ module.exports = function(app) {
   if (req.cookies.team) {
    res.render('pages/nominate', {teamShort: req.cookies.team});
   } else {
-   res.writeHead(301, {Location: '/login.html'});
-   res.end();
+   return res.redirect('/login.html');
   }
  });
 
@@ -99,8 +96,7 @@ module.exports = function(app) {
    console.log(req.body.pos + ' ' + req.body.firstName + ' ' + req.body.lastName + ' nominated');
   });
 
-  res.writeHead(301, {Location: '/auction_board.html'});
-  res.end();
+  return res.redirect('/auction_board.html');
   //res.render('pages/bid_confirm', {Player: req.body.player, Team: req.body.team, Bid: req.body.bid});
  });
 

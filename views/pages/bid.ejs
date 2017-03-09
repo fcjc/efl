@@ -1,12 +1,13 @@
 <html>
  <head>
+  <link href="/styles.css" rel="stylesheet" type="text/css">
  </head>
  <body>
   <h1>EFL 2017 Bidding page</h1>
   <form action="/bid.html" method="post">
    <input name="team" type="hidden" value="<%= teamShort %>">
 
-  Player:&nbsp;&nbsp;
+  Player:&nbsp;
    <select name="player">
   <% var posDisp;
   var curPlayer;
@@ -27,8 +28,8 @@
    </select>
 
 
-   Bid:&nbsp;&nbsp;
-   <input type="text" name="bid"><br>
+   Bid:&nbsp;
+   <input class="bid" type="text" name="bid">
    <input type="submit" name="submit" value="Place Bid">
   </form>
  </body>
