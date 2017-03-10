@@ -21,7 +21,7 @@ var BidSchema = new mongoose.Schema({
  lastName: String,
  bid: Number,
  team: String,
- bidTime: Date,
+ bidTime: Number,
  nominate: Boolean,
  close: Boolean
 });
@@ -33,38 +33,67 @@ module.exports = function(app) {
 
  app.get('/auction_board.html', function(req, res) {
   Bid.find({}, null, {sort: {lastName: 1, bid: -1}}, function(err, data) {
-   res.render('pages/auction_board', {BidData: data});
-  })
+   var openAuctions = [];
+   var closedAuctions = [];
+   var curPlayer;
+   var closedPlayer;
+   data.forEach(function(newData) {
+    curPlayer = newData.pos + newData.firstName + newData.lastName;
+    if (newData.close) {
+     closedPlayer = curPlayer;
+    }
+    if (curPlayer !== closedPlayer) {
+     openAuctions.push(newData);
+    } else {
+     closedAuctions.push(newData);
+    }
+   });
+   res.render('pages/auction_board', {BidData: openAuctions, closed: closedAuctions});
+  });
  });
 
 
  app.get('/bid.html', function(req, res) {
+  if (!req.cookies.team) {
+   return res.redirect('/login.html');
+  }
   Bid.find({}, null, {sort: {lastName: 1, bid: -1}}, function(err, data) {
-   if (req.cookies.team) {
-    res.render('pages/bid', {BidData: data, teamShort: req.cookies.team});
-   } else {
-    return res.redirect('/login.html');
-   }
-
-  })
+   var openAuctions = [];
+   var curPlayer;
+   var closedPlayer;
+   data.forEach(function(newData) {
+    curPlayer = newData.pos + newData.firstName + newData.lastName;
+    if (newData.close) {
+     closedPlayer = curPlayer;
+    }
+    if (curPlayer !== closedPlayer) {
+     openAuctions.push(newData);
+    }
+   });
+   res.render('pages/bid', {BidData: openAuctions, teamShort: req.cookies.team});
+  });
  });
 
  app.post('/bid.html', urlencodedParser, function(req, res) {
   var playerInfo = req.body.player.split(" ");
   if (playerInfo[0].length > 2) {
    var playerPos = playerInfo[0].split("/");
+  } else {
+   var playerPos = [playerInfo[0], ''];;
   }
+  var unixtime = new Date().getTime() / 1000;
   new Bid({ 
-   pos: playerInfo[0],
-   secPos: '',
+   pos: playerPos[0],
+   secPos: playerPos[1],
    firstName: playerInfo[1],
    lastName: playerInfo[2],
    bid: req.body.bid,
    team: req.body.team,
-   bidTime: new Date,
+   bidTime: unixtime,
    nominate: 0,
    close: 0,
   }).save(function (err) {
+   if (err) console.log(err);
    console.log(req.body.player + " added");
   });
 
@@ -82,6 +111,7 @@ module.exports = function(app) {
  });
 
  app.post('/nominate.html', urlencodedParser, function(req, res) {
+  var unixtime = new Date().getTime() / 1000;
   new Bid({
    pos: req.body.pos,
    secPos: req.body.posSec,
@@ -89,7 +119,7 @@ module.exports = function(app) {
    lastName: req.body.lastName,
    bid: req.body.bid,
    team: req.body.team,
-   bidTime: new Date,
+   bidTime: unixtime,
    nominate: true,
    close: 0,
   }).save(function (err) {
@@ -102,7 +132,24 @@ module.exports = function(app) {
 
  app.get('/close_check.html', function(req, res) {
   Bid.find({}, null, {sort: {lastName: 1, bid: -1}}, function(err, data) {
-   res.render('pages/auction_board', {BidData: data});
+   var curPlayer;
+   var prevPlayer;
+   var curTime = new Date().getTime() / 1000;
+   var oneDay = 86400;
+   data.forEach(function(data) {
+    curPlayer = data.pos + data.secPos + data.firstName + data.lastName;
+    if ((curPlayer !== prevPlayer) && (!data.close)) {
+     //console.log(curPlayer + ' ' + data.bidTime);
+     if (curTime > (data.bidTime + oneDay)) {
+      console.log('need to close ' + curPlayer);
+      Bid.where({ firstName: data.firstName, lastName: data.lastName, bidTime: data.bidTime }).update({ $set: {close: true}}, function(err, data2) {
+       console.log('closed ' + data.firstName + data.lastName);
+      });
+     }
+    }
+    prevPlayer = curPlayer;
+   });
+   res.render('pages/close', {BidData: data});
   })
  });
 

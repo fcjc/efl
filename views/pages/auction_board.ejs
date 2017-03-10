@@ -3,6 +3,7 @@
   <link href="/styles.css" rel="stylesheet" type="text/css">
  </head>
  <body>
+  <% include ../partials/nav.ejs %>
   <h1>Auction Board</h1>
   <% var posDisp %>
   <% var curPlayer %>
@@ -18,9 +19,55 @@
     <% if (curPlayer !== nextPlayer) { %>
      </div><div><%= curPlayer %>
     <% } %>
-    <span class="bid">(<%= BidData[i].lastName %>) <%= BidData[i].team %> - <%= BidData[i].bid %></span>
+    <span class="bid">
+     <script>
+      var date = new Date(<%= BidData[i].bidTime %> *1000);
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      var day = date.getDate();
+      var hours = date.getHours();
+      var minutes = "0" + date.getMinutes();
+      var seconds = "0" + date.getSeconds();
+
+      // Will display time in 10:30:23 format
+      var formattedTime = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+      document.write(formattedTime);
+     </script>
+     (<%= BidData[i].lastName %>) <%= BidData[i].team %> - <%= BidData[i].bid %></span>
     <% nextPlayer = curPlayer %>
   <% } %>
   </div>
+
+  <h2>Closed Auctions</h2>
+  <div>
+  <% for (var i = 0; i < closed.length; i++) { %>
+    <% if (closed[i].secPos) {
+     posDisp = closed[i].pos + '/' + closed[i].secPos;
+    } else {
+     posDisp = closed[i].pos;
+    } %>
+    <% curPlayer = posDisp + ' ' + closed[i].firstName + ' ' + closed[i].lastName; %>
+    <% if (curPlayer !== nextPlayer) { %>
+     </div><div><%= curPlayer %>
+    <% } %>
+    <span class="bid">
+     <script>
+      var date = new Date(<%= closed[i].bidTime %> *1000);
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      var day = date.getDate();
+      var hours = date.getHours();
+      var minutes = "0" + date.getMinutes();
+      var seconds = "0" + date.getSeconds();
+
+      // Will display time in 10:30:23 format
+      var formattedTime = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+      document.write(formattedTime);
+     </script>
+     (<%= closed[i].lastName %>) <%= closed[i].team %> - <%= closed[i].bid %></span>
+    <% nextPlayer = curPlayer %>
+  <% } %>
+  </div>
+
  </body>
 </html>
