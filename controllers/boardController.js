@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({extended: false});
+var Bid = require("../apps/models/bid").Bid;
+var Team = require("../apps/models/team").Team;
 
 mongoose.Promise = global.Promise;
 //Connect to the database
@@ -13,6 +15,7 @@ var db = mongoose.connection;
 // console.log('connected using boardControllers');
 //});
 
+/*
 var BidSchema = new mongoose.Schema({
  pos: String,
  secPos: String,
@@ -26,29 +29,48 @@ var BidSchema = new mongoose.Schema({
  close: Boolean
 });
 var Bid = mongoose.model('Bid', BidSchema);
-
+*/
 var message;
 
 module.exports = function(app) {
 
  app.get('/auction_board.html', function(req, res) {
-  Bid.find({}, null, {sort: {lastName: 1, bid: -1}}, function(err, data) {
-   var openAuctions = [];
-   var closedAuctions = [];
-   var curPlayer;
-   var closedPlayer;
-   data.forEach(function(newData) {
-    curPlayer = newData.pos + newData.firstName + newData.lastName;
-    if (newData.close) {
-     closedPlayer = curPlayer;
-    }
-    if (curPlayer !== closedPlayer) {
-     openAuctions.push(newData);
-    } else {
-     closedAuctions.push(newData);
-    }
+  var tempBudget = [];
+  Team.find({}, null, {sort: {shortName: 1}}, function(err, teamdata) {
+   for (var i = 0; i < 12; i++) { 
+    tempBudget.push([teamdata[i].shortName, teamdata[i].startBudget, teamdata[i].availBudget, teamdata[i].availBudget]);
+   }
+   //console.log(tempBudget);
+
+   Bid.find({}, null, {sort: {lastName: 1, bid: -1}}, function(err, data) {
+    var openAuctions = [];
+    var closedAuctions = [];
+    var curPlayer;
+    var closedPlayer;
+    var prevPlayer;
+    data.forEach(function(newData) {
+     curPlayer = newData.pos + newData.firstName + newData.lastName;
+     if (newData.close) {
+      closedPlayer = curPlayer;
+     }
+     if (curPlayer !== closedPlayer) {
+      openAuctions.push(newData);
+      if (curPlayer !== prevPlayer) {
+       for (var i = 0; i < 12; i++) {
+        if (tempBudget[i][0] == newData.team) {
+         //console.log('deduct ' + newData.bid + ' from ' + tempBudget[i][0]);
+         tempBudget[i][3] = tempBudget[i][3] - newData.bid;
+        }
+       }
+      }
+      prevPlayer = curPlayer;
+     } else {
+      closedAuctions.push(newData);
+     }
+    });
+    //console.log(tempBudget);
+    res.render('pages/auction_board', {BidData: openAuctions, closed: closedAuctions, budget: tempBudget});
    });
-   res.render('pages/auction_board', {BidData: openAuctions, closed: closedAuctions});
   });
  });
 
@@ -81,26 +103,35 @@ module.exports = function(app) {
   } else {
    var playerPos = [playerInfo[0], ''];;
   }
-  var unixtime = new Date().getTime() / 1000;
-  new Bid({ 
-   pos: playerPos[0],
-   secPos: playerPos[1],
-   firstName: playerInfo[1],
-   lastName: playerInfo[2],
-   bid: req.body.bid,
-   team: req.body.team,
-   bidTime: unixtime,
-   nominate: 0,
-   close: 0,
-  }).save(function (err) {
-   if (err) console.log(err);
-   console.log(req.body.player + " added");
+  Bid.find({pos: playerPos[0], firstName: playerInfo[1], lastName: playerInfo[2]}, null, {sort: {bid: -1}}, function(err, data) {
+   if (req.body.bid > data[0].bid) {
+    var unixtime = new Date().getTime() / 1000;
+    new Bid({ 
+     pos: playerPos[0],
+     secPos: playerPos[1],
+     firstName: playerInfo[1],
+     lastName: playerInfo[2],
+     bid: req.body.bid,
+     team: req.body.team,
+     bidTime: unixtime,
+     nominate: 0,
+     close: 0,
+    }).save(function (err) {
+    if (err) console.log(err);
+     console.log(req.body.player + " bid added");
+    });
+    return res.redirect('/auction_board.html');
+   } else {
+    console.log(data[0].lastName + ' bid too small');
+    return res.redirect('/biderror.html');
+   }
   });
-
-  return res.redirect('/auction_board.html');
   //res.render('pages/bid_confirm', {Player: req.body.player, Team: req.body.team, Bid: req.body.bid});
  });
 
+ app.get('/biderror.html', function(req, res) {
+  res.render('pages/biderror', {errmsg: 'bid too small'});
+ });
 
  app.get('/nominate.html', function(req, res) {
   if (req.cookies.team) {
@@ -143,7 +174,10 @@ module.exports = function(app) {
      if (curTime > (data.bidTime + oneDay)) {
       console.log('need to close ' + curPlayer);
       Bid.where({ firstName: data.firstName, lastName: data.lastName, bidTime: data.bidTime }).update({ $set: {close: true}}, function(err, data2) {
-       console.log('closed ' + data.firstName + data.lastName);
+       Team.where({ shortName: data.team }).update({ $inc: {availBudget: -(data.bid)}}, function(err, data3) {
+        console.log('closed ' + data.firstName + data.lastName);
+        console.log('deducted ' + data.bid + ' from ' + data.team); 
+       });
       });
      }
     }

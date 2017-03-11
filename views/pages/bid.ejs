@@ -21,7 +21,7 @@
     } %>
     <% curPlayer = posDisp + ' ' + BidData[i].firstName + ' ' + BidData[i].lastName; %>
     <% if (curPlayer !== nextPlayer) { %>
-      <option value="<%= curPlayer %>"><%= curPlayer %> - <%= BidData[i].bid %></option>
+      <option value="<%= curPlayer %>"><%= curPlayer %> - <%= BidData[i].team %> <%= BidData[i].bid %></option>
     <% } %>
     <% nextPlayer = curPlayer %>
   <% } %>
@@ -29,7 +29,7 @@
 
 
    Bid:&nbsp;
-   <input class="bid" type="text" name="bid">
+   <input class="bid" type="number" name="bid">
    <input type="submit" name="submit" value="Place Bid">
   </form>
  </body>

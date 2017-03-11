@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt-nodejs');
 var urlencodedParser = bodyParser.urlencoded({extended: false});
+var Team = require("../apps/models/team").Team;
 
 mongoose.Promise = global.Promise;
 //Connect to the database
@@ -15,6 +16,7 @@ db.once('open', function() {
 });
 
 //Schema
+/*
 var TeamSchema = new mongoose.Schema({
  name: String,
  owner: String,
@@ -27,11 +29,7 @@ var TeamSchema = new mongoose.Schema({
  lastLogin: Date
 });
 var Team = mongoose.model('Team', TeamSchema);
-
-var TeamData;
-Team.find({}, function(err, data) {
- TeamData = data;
-});
+*/
 
 module.exports = function(app) {
 

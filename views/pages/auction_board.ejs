@@ -4,70 +4,108 @@
  </head>
  <body>
   <% include ../partials/nav.ejs %>
-  <h1>Auction Board</h1>
+
+  <div class="teaminfo">
+   <h2>Team Budget</h2>
+   <div>
+    Team<br>
+    Start:<br>
+    Avail:<br>
+    IfWonAll:
+   </div>
+   <% for (var i = 0; i < 12; i++) { %>
+    <div>
+    <%= budget[i][0] %><br>
+    <%= budget[i][1] %><br>
+    <%= budget[i][2] %><br>
+    <%= budget[i][3] %>
+    </div>
+   <% } %>
+  </div>
+  
   <% var posDisp %>
   <% var curPlayer %>
   <% var nextPlayer %>
-  <div>
-  <% for (var i = 0; i < BidData.length; i++) { %>
-    <% if (BidData[i].secPos) { 
-     posDisp = BidData[i].pos + '/' + BidData[i].secPos;
-    } else {
-     posDisp = BidData[i].pos;
-    } %>
-    <% curPlayer = posDisp + ' ' + BidData[i].firstName + ' ' + BidData[i].lastName; %>
-    <% if (curPlayer !== nextPlayer) { %>
-     </div><div><%= curPlayer %>
-    <% } %>
-    <span class="bid">
-     <script>
-      var date = new Date(<%= BidData[i].bidTime %> *1000);
-      var year = date.getFullYear();
-      var month = date.getMonth() + 1;
-      var day = date.getDate();
-      var hours = date.getHours();
-      var minutes = "0" + date.getMinutes();
-      var seconds = "0" + date.getSeconds();
+  <div class="auctionboard">
+   <h1>Auction Board</h1>
+   <div class="auctionplayer">
+    <% for (var i = 0; i < BidData.length; i++) { %>
+     <% if (BidData[i].secPos) { 
+      posDisp = BidData[i].pos + '/' + BidData[i].secPos;
+     } else {
+      posDisp = BidData[i].pos;
+     } %>
+     <% curPlayer = posDisp + ' ' + BidData[i].firstName + ' ' + BidData[i].lastName; %>
+     <% if (curPlayer !== nextPlayer) { %>
+      <% if (i == 0) { %>
+       <span class="playername"><%= curPlayer %></span>
+      <% } else { %>
+       </div><div class="auctionplayer"><span class="playername"><%= curPlayer %></span>
+      <% } %>
+     <% } %>
+     <span class="bid"><span class="time">
+      <script>
+       var date = new Date(<%= BidData[i].bidTime %> *1000);
+       var year = date.getFullYear();
+       var month = date.getMonth() + 1;
+       var day = date.getDate();
+       var hours = date.getHours();
+       var minutes = "0" + date.getMinutes();
+       var seconds = "0" + date.getSeconds();
 
-      // Will display time in 10:30:23 format
-      var formattedTime = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-      document.write(formattedTime);
-     </script>
-     (<%= BidData[i].lastName %>) <%= BidData[i].team %> - <%= BidData[i].bid %></span>
-    <% nextPlayer = curPlayer %>
-  <% } %>
+       // Will display time in 10:30:23 format
+       var formattedTime = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+       document.write(formattedTime);
+      </script>
+      </span>
+     <%= BidData[i].team %> - <%= BidData[i].bid %></span>
+     <% nextPlayer = curPlayer %>
+    <% } %>
+   </div>
   </div>
 
-  <h2>Closed Auctions</h2>
-  <div>
-  <% for (var i = 0; i < closed.length; i++) { %>
-    <% if (closed[i].secPos) {
-     posDisp = closed[i].pos + '/' + closed[i].secPos;
-    } else {
-     posDisp = closed[i].pos;
-    } %>
-    <% curPlayer = posDisp + ' ' + closed[i].firstName + ' ' + closed[i].lastName; %>
-    <% if (curPlayer !== nextPlayer) { %>
-     </div><div><%= curPlayer %>
-    <% } %>
-    <span class="bid">
-     <script>
-      var date = new Date(<%= closed[i].bidTime %> *1000);
-      var year = date.getFullYear();
-      var month = date.getMonth() + 1;
-      var day = date.getDate();
-      var hours = date.getHours();
-      var minutes = "0" + date.getMinutes();
-      var seconds = "0" + date.getSeconds();
 
-      // Will display time in 10:30:23 format
-      var formattedTime = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-      document.write(formattedTime);
-     </script>
-     (<%= closed[i].lastName %>) <%= closed[i].team %> - <%= closed[i].bid %></span>
-    <% nextPlayer = curPlayer %>
-  <% } %>
+  <% var posDisp %>
+  <% var curPlayer %>
+  <% var nextPlayer %>
+  <div class="closedboard">
+   <h1>Closed Auctions</h1>
+   <div class="closedplayer">
+    <% for (var i = 0; i < closed.length; i++) { %>
+     <% if (closed[i].secPos) {
+      posDisp = closed[i].pos + '/' + closed[i].secPos;
+     } else {
+      posDisp = closed[i].pos;
+     } %>
+     <% curPlayer = posDisp + ' ' + closed[i].firstName + ' ' + closed[i].lastName; %>
+     <% if (curPlayer !== nextPlayer) { %>
+      <% if (i == 0) { %>
+       <span class="playername"><%= curPlayer %></span>
+      <% } else { %>
+       </div><div class="closedplayer"><span class="playername"><%= curPlayer %></span>
+      <% } %>
+     <% } %>
+     <span class="bid"><span class="time">
+      <script>
+       var date = new Date(<%= closed[i].bidTime %> *1000);
+       var year = date.getFullYear();
+       var month = date.getMonth() + 1;
+       var day = date.getDate();
+       var hours = date.getHours();
+       var minutes = "0" + date.getMinutes();
+       var seconds = "0" + date.getSeconds();
+
+       // Will display time in 10:30:23 format
+       var formattedTime = month + '/' + day + '/' + year + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+       document.write(formattedTime);
+      </script>
+      </span>
+     <%= closed[i].team %> - <%= closed[i].bid %></span>
+     <% nextPlayer = curPlayer %>
+    <% } %>
+   </div>
   </div>
+
 
  </body>
 </html>
