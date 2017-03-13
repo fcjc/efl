@@ -139,7 +139,7 @@ module.exports = function(app) {
     return res.redirect('/login.html');
    }
    console.log('debug bid3');
-   console.log('this bid is for ' + req.body.player + ' for the amount ' + req.body.bid);
+   console.log('this bid is for ' + req.body.player + ' for the amount ' + req.body.bid + ' from team:' + req.body.team);
    if (req.body.bid > data[0].bid) {
     console.log('debug bid3end');
     var unixtime = new Date().getTime() / 1000;
