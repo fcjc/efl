@@ -21,6 +21,7 @@ var TeamSchema = new mongoose.Schema({
  startBudget: Number,
  availBudget: Number,
  ifWonAllBudget: Number,
+ rosterCount: Number,
  lastLogin: Date
 });
 var Team = mongoose.model('Team', TeamSchema);
@@ -39,7 +40,7 @@ var BidSchema = new mongoose.Schema({
 });
 var Bid = mongoose.model('Bid', BidSchema);
 
-var addBid = new Bid({
+/*var addBid = new Bid({
  pos: '1B',
  secPos: '',
  thirdPos: '',
@@ -53,6 +54,7 @@ var addBid = new Bid({
 }).save(function (err) {
  console.log('player added');
 });
+*/
 
 /*var TeamOne = new Team({
  name: 'Minor League',
@@ -63,14 +65,19 @@ var addBid = new Bid({
  startBudget: 280,
  availBudget: 280,
  ifWonAllBudget: 280,
+ rosterCount: 14,
  lastLogin: Date()
 }).save(function (err) {
  console.log('item saved');
 });
 */
 
-/*Team.where({ name: 'Sailors' }).update({ $set: {password: 'temp'} }, function (err, data) {
+/*Team.where({ shortName: 'Pastry' }).update({ $set: {rosterCount: 14} }, function (err, data) {
  console.log(data);
 });
 */
+
+Team.where({ shortName: 'Sailors' }).update({ $inc: {availBudget: -10, rosterCount: +1}}, function(err, data) {
+ console.log('done');
+});
 

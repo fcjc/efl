@@ -10,6 +10,8 @@ var TeamSchema = new mongoose.Schema({
  startBudget: Number,
  availBudget: Number,
  ifWonAllBudget: Number,
+ rosterCount: Number,
+ possibleRoster: Number,
  lastLogin: Date
 });
 var Team = mongoose.model('Team', TeamSchema);

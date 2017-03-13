@@ -68,7 +68,7 @@ module.exports = function(app) {
       closedAuctions.push(newData);
      }
     });
-    //console.log(tempBudget);
+    console.log(tempBudget);
     res.render('pages/auction_board', {BidData: openAuctions, closed: closedAuctions, budget: tempBudget});
    });
   });
@@ -103,6 +103,14 @@ module.exports = function(app) {
   } else {
    var playerPos = [playerInfo[0], ''];;
   }
+
+  //Bid check not live yet
+  Team.findOne({ shortName: req.body.team }, function(err, data) {
+   if (req.body.bid > data.ifWonAllBudget) {
+    console.log('Cannot afford bid of ' + req.body.bid);
+   }
+  });
+
   Bid.find({pos: playerPos[0], firstName: playerInfo[1], lastName: playerInfo[2]}, null, {sort: {bid: -1}}, function(err, data) {
    if (req.body.bid > data[0].bid) {
     var unixtime = new Date().getTime() / 1000;
@@ -174,7 +182,7 @@ module.exports = function(app) {
      if (curTime > (data.bidTime + oneDay)) {
       console.log('need to close ' + curPlayer);
       Bid.where({ firstName: data.firstName, lastName: data.lastName, bidTime: data.bidTime }).update({ $set: {close: true}}, function(err, data2) {
-       Team.where({ shortName: data.team }).update({ $inc: {availBudget: -(data.bid)}}, function(err, data3) {
+       Team.where({ shortName: data.team }).update({ $inc: {availBudget: -(data.bid), rosterCount: +1}}, function(err, data3) {
         console.log('closed ' + data.firstName + data.lastName);
         console.log('deducted ' + data.bid + ' from ' + data.team); 
        });
