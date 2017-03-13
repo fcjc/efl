@@ -37,12 +37,20 @@ module.exports = function(app) {
  app.get('/auction_board.html', function(req, res) {
   var tempBudget = [];
   Team.find({}, null, {sort: {shortName: 1}}, function(err, teamdata) {
+   if (err) {
+    console.log('error! app.get-auction_board');
+    return res.redirect('/login.html');
+   }
    for (var i = 0; i < 12; i++) { 
     tempBudget.push([teamdata[i].shortName, teamdata[i].startBudget, teamdata[i].availBudget, teamdata[i].availBudget]);
    }
    //console.log(tempBudget);
 
    Bid.find({}, null, {sort: {lastName: 1, bid: -1}}, function(err, data) {
+   if (err) {
+    console.log('error! app.get-auction_board bid.find');
+    return res.redirect('/login.html');
+   }
     var openAuctions = [];
     var closedAuctions = [];
     var curPlayer;
@@ -82,6 +90,10 @@ module.exports = function(app) {
    return res.redirect('/login.html');
   }
   Bid.find({}, null, {sort: {lastName: 1, bid: -1}}, function(err, data) {
+   if (err) {
+    console.log('error! app.get-bid');
+    return res.redirect('/login.html');
+   }
    var openAuctions = [];
    var curPlayer;
    var closedPlayer;
@@ -108,6 +120,10 @@ module.exports = function(app) {
 
   //Bid check not live yet
   Team.findOne({ shortName: req.body.team }, function(err, data) {
+   if (err) {
+    console.log('error! app.post-bid');
+    return res.redirect('/login.html');
+   }
    console.log('debug bid2');
    if (req.body.bid > data.ifWonAllBudget) {
     console.log('Cannot afford bid of ' + req.body.bid);
@@ -116,6 +132,10 @@ module.exports = function(app) {
   });
 
   Bid.find({pos: playerPos[0], firstName: playerInfo[1], lastName: playerInfo[2]}, null, {sort: {bid: -1}}, function(err, data) {
+   if (err) {
+    console.log('error! app.post-bid bid.find');
+    return res.redirect('/login.html');
+   }
    console.log('debug bid3');
    if (req.body.bid > data[0].bid) {
     console.log('debug bid3end');
@@ -170,6 +190,10 @@ module.exports = function(app) {
    nominate: true,
    close: 0,
   }).save(function (err) {
+   if (err) {
+    console.log('error! app.post-nominate');
+    return res.redirect('/login.html');
+   }
    console.log(req.body.pos + ' ' + req.body.firstName + ' ' + req.body.lastName + ' nominated');
   });
   console.log('debug bid5');
