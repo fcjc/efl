@@ -118,6 +118,7 @@ module.exports = function(app) {
    var playerPos = [playerInfo[0], ''];;
   }
 
+  /* is this the bug!!!!
   //Bid check not live yet
   Team.findOne({ shortName: req.body.team }, function(err, data) {
    if (err) {
@@ -130,6 +131,7 @@ module.exports = function(app) {
    }
    console.log('debug bid2end');
   });
+  */
 
   Bid.find({pos: playerPos[0], firstName: playerInfo[1], lastName: playerInfo[2]}, null, {sort: {bid: -1}}, function(err, data) {
    if (err) {
