@@ -59,7 +59,9 @@ module.exports = function(app) {
        for (var i = 0; i < 12; i++) {
         if (tempBudget[i][0] == newData.team) {
          //console.log('deduct ' + newData.bid + ' from ' + tempBudget[i][0]);
+         console.log('debug bid1');
          tempBudget[i][3] = tempBudget[i][3] - newData.bid;
+         console.log('debug bid1end');
         }
        }
       }
@@ -106,13 +108,17 @@ module.exports = function(app) {
 
   //Bid check not live yet
   Team.findOne({ shortName: req.body.team }, function(err, data) {
+   console.log('debug bid2');
    if (req.body.bid > data.ifWonAllBudget) {
     console.log('Cannot afford bid of ' + req.body.bid);
    }
+   console.log('debug bid2end');
   });
 
   Bid.find({pos: playerPos[0], firstName: playerInfo[1], lastName: playerInfo[2]}, null, {sort: {bid: -1}}, function(err, data) {
+   console.log('debug bid3');
    if (req.body.bid > data[0].bid) {
+    console.log('debug bid3end');
     var unixtime = new Date().getTime() / 1000;
     new Bid({ 
      pos: playerPos[0],
@@ -130,6 +136,7 @@ module.exports = function(app) {
     });
     return res.redirect('/auction_board.html');
    } else {
+    console.log('debug bid3end2');
     console.log(data[0].lastName + ' bid too small');
     return res.redirect('/biderror.html');
    }
@@ -151,6 +158,7 @@ module.exports = function(app) {
 
  app.post('/nominate.html', urlencodedParser, function(req, res) {
   var unixtime = new Date().getTime() / 1000;
+  console.log('debug bid4');
   new Bid({
    pos: req.body.pos,
    secPos: req.body.posSec,
@@ -164,6 +172,7 @@ module.exports = function(app) {
   }).save(function (err) {
    console.log(req.body.pos + ' ' + req.body.firstName + ' ' + req.body.lastName + ' nominated');
   });
+  console.log('debug bid5');
 
   return res.redirect('/auction_board.html');
   //res.render('pages/bid_confirm', {Player: req.body.player, Team: req.body.team, Bid: req.body.bid});
