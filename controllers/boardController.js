@@ -67,9 +67,7 @@ module.exports = function(app) {
        for (var i = 0; i < 12; i++) {
         if (tempBudget[i][0] == newData.team) {
          //console.log('deduct ' + newData.bid + ' from ' + tempBudget[i][0]);
-         console.log('debug bid1');
          tempBudget[i][3] = tempBudget[i][3] - newData.bid;
-         console.log('debug bid1end');
         }
        }
       }
