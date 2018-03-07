@@ -26,7 +26,7 @@ var TeamSchema = new mongoose.Schema({
  startBudget: Number,
  availBudget: Number,
  ifWonAllBudget: Number,
- lastLogin: Date
+ lastLogin: Number
 });
 var Team = mongoose.model('Team', TeamSchema);
 */
@@ -58,7 +58,7 @@ module.exports = function(app) {
     res.render('pages/register', {teams: data, errmsg: message});
    } else {
     bcrypt.hash(req.body.password, null, null, function(err, bcryptedPassword) {
-     Team.where({ shortName: req.body.shortName }).update({ $set: {login: req.body.login, password: bcryptedPassword, lastLogin: Date()} }, function (err, data) {
+     Team.where({ shortName: req.body.shortName }).update({ $set: {login: req.body.login, password: bcryptedPassword} }, function (err, data) {
       res.render('pages/login', {errmsg: ''});
      });
     });

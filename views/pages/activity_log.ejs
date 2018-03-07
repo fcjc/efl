@@ -1,0 +1,54 @@
+<html>
+ <head>
+  <% include ../partials/head.ejs %>
+ </head>
+ <body>
+  <% include ../partials/nav.ejs %>
+
+  <h1>Activity Log</h1>
+  <div class="label">* new activity since last login</div>
+   <div class="activitylog">
+    <% for (var i = 0; i < activityData.length; i++) { %>
+     <div class="log_item">
+      <% if (activityData[i][0] > lastLogin) { %>
+       *
+      <% } %>
+      <span class="
+       <% if (activityData[i][2] == 2) { %>
+        close
+       <% } else if (activityData[i][2]) { %>
+        nominate
+       <% } else { %>
+        bid
+       <% } %>
+      "><%= activityData[i][1] %></span>
+      <br/>
+      <span class="time">
+      <script>
+       var date = new Date(<%= activityData[i][0] %> *1000);
+       //var year = date.getFullYear();
+       var month = date.getMonth() + 1;
+       var day = date.getDate();
+       var ampm = 'AM';
+       var hours = date.getHours();
+       if (hours > 12) {
+        hours = hours - 12;
+        ampm = 'PM';
+       }
+       if (hours == 0) {
+        hours = 12;
+       }
+       var minutes = "0" + date.getMinutes();
+       var seconds = "0" + date.getSeconds();
+
+       // Will display time in 10:30:23 format
+       var formattedTime = month + '/' + day + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + ' ' + ampm;
+       document.write(formattedTime);
+      </script>
+      </span>
+     </div>
+    <% } %>
+   </div>
+
+ </body>
+</html>

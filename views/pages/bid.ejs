@@ -21,7 +21,11 @@
     } %>
     <% curPlayer = posDisp + ' ' + BidData[i].firstName + ' ' + BidData[i].lastName; %>
     <% if (curPlayer !== nextPlayer) { %>
-      <option value="<%= curPlayer %>"><%= curPlayer %> - <%= BidData[i].team %> <%= BidData[i].bid %></option>
+      <option value="<%= curPlayer %>" 
+       <% if (curPlayer == playerID) { %>
+        selected
+       <% } %> 
+      ><%= curPlayer %> - <%= BidData[i].team %> <%= BidData[i].bid %></option>
     <% } %>
     <% nextPlayer = curPlayer %>
   <% } %>

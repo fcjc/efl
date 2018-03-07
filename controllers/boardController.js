@@ -34,14 +34,66 @@ var message;
 
 module.exports = function(app) {
 
+  app.get('/activity_log.html', function(req, res) {
+   Team.findOne({ shortName: req.cookies.team }, function(err, dataTeam) {
+
+   Bid.find({}, null, {sort: {bidTime: -1}}, function(err, data) {
+   if (err) {
+    console.log('error! app.get-activity_log bid.find');
+    return res.redirect('/login.html');
+   }
+    var tickerLog = [];
+    var announceBid;
+    var announceClose;
+    var curPlayer;
+    data.forEach(function(newData) {
+     curPlayer = newData.pos + '  ' + newData.firstName.charAt(0) + '.' + newData.lastName;
+     if (newData.nominate) {
+      announceBid = 'Nom: ' + newData.team + ' - ' + curPlayer + ' for ' + newData.bid;
+     } else {
+      announceBid = 'Bid: ' + newData.team + ' - ' + curPlayer + ' for ' + newData.bid;
+     }
+     tickerLog.push([newData.bidTime, announceBid, newData.nominate]);
+     if (newData.close) {
+      announceClose = 'Win: ' + newData.team + ' - ' + curPlayer + ' for ' + newData.bid;
+      tickerLog.push([newData.bidTime + 86400, announceClose, 2]);
+     }
+    });
+
+    //resort array
+    tickerLog.sort(sortFunction);
+    function sortFunction(a, b) {
+     if (a[0] === b[0]) {
+      return 0;
+     } else {
+      return (a[0] > b[0]) ? -1 : 1;
+     }
+    }
+    res.render('pages/activity_log', {activityData: tickerLog, lastLogin: dataTeam.last2ndLogin});
+   });
+  });
+ });
+
  app.get('/auction_board.html', function(req, res) {
+  if (!req.cookies.team) {
+   return res.redirect('/login.html');
+  }
+  var unixtime = new Date().getTime() / 1000;
+  var curTeamLastLogin;
+
   var tempBudget = [];
   Team.find({}, null, {sort: {shortName: 1}}, function(err, teamdata) {
    if (err) {
     console.log('error! app.get-auction_board');
     return res.redirect('/login.html');
    }
-   for (var i = 0; i < 12; i++) { 
+   for (var i = 0; i < 12; i++) {
+    if (teamdata[i].shortName == req.cookies.team) {
+     curTeamLastLogin = teamdata[i].lastLogin;
+     Team.where({ shortName: req.cookies.team }).update({ $set: {last2ndLogin: teamdata[i].lastLogin, lastLogin: unixtime}}, function(err) {
+      console.log(req.cookies.team + ' has accessed the auctionboard: ' + new Date(unixtime * 1000));
+     });
+    }
     tempBudget.push([teamdata[i].shortName, teamdata[i].startBudget, teamdata[i].availBudget, teamdata[i].availBudget]);
    }
    //console.log(tempBudget);
@@ -56,10 +108,24 @@ module.exports = function(app) {
     var curPlayer;
     var closedPlayer;
     var prevPlayer;
+    var tickerLog = [];
+    var announceBid;
+    var announceClose;
+    var curPlayerShort;
     data.forEach(function(newData) {
      curPlayer = newData.pos + newData.firstName + newData.lastName;
+     curPlayerShort = newData.pos + '  ' + newData.firstName.charAt(0) + '.' + newData.lastName;
+     if (newData.nominate) {
+      announceBid = 'Nom: ' + newData.team + ' - ' + curPlayerShort + ' for ' + newData.bid;
+     } else {
+      announceBid = 'Bid: ' + newData.team + ' - ' + curPlayerShort + ' for ' + newData.bid;
+     }
+     tickerLog.push([newData.bidTime, announceBid, newData.nominate]);
+
      if (newData.close) {
       closedPlayer = curPlayer;
+      announceClose = 'Win: ' + newData.team + ' - ' + curPlayerShort + ' for ' + newData.bid;
+      tickerLog.push([newData.bidTime + 86400, announceClose, 2]);
      }
      if (curPlayer !== closedPlayer) {
       openAuctions.push(newData);
@@ -76,14 +142,50 @@ module.exports = function(app) {
       closedAuctions.push(newData);
      }
     });
-    console.log(tempBudget);
-    res.render('pages/auction_board', {BidData: openAuctions, closed: closedAuctions, budget: tempBudget});
+
+    //resort array
+    tickerLog.sort(sortFunction);
+    function sortFunction(a, b) {
+     if (a[0] === b[0]) {
+      return 0;
+     } else {
+      return (a[0] > b[0]) ? -1 : 1;
+     }
+    }
+
+    //console.log(tempBudget);
+    res.render('pages/auction_board', {BidData: openAuctions, closed: closedAuctions, budget: tempBudget, activityData: tickerLog, lastLogin: curTeamLastLogin});
    });
   });
  });
 
-
  app.get('/bid.html', function(req, res) {
+  if (!req.cookies.team) {
+   return res.redirect('/login.html');
+  }
+  var playerID = null;
+  Bid.find({}, null, {sort: {lastName: 1, bid: -1}}, function(err, data) {
+   if (err) {
+    console.log('error! app.get-bid');
+    return res.redirect('/login.html');
+   }
+   var openAuctions = [];
+   var curPlayer;
+   var closedPlayer;
+   data.forEach(function(newData) {
+    curPlayer = newData.pos + newData.firstName + newData.lastName;
+    if (newData.close) {
+     closedPlayer = curPlayer;
+    }
+    if (curPlayer !== closedPlayer) {
+     openAuctions.push(newData);
+    }
+   });
+   res.render('pages/bid', {BidData: openAuctions, teamShort: req.cookies.team, playerID: playerID});
+  });
+ });
+
+ app.get('/bid.html/:playerID', function(req, res) {
   if (!req.cookies.team) {
    return res.redirect('/login.html');
   }
@@ -104,7 +206,7 @@ module.exports = function(app) {
      openAuctions.push(newData);
     }
    });
-   res.render('pages/bid', {BidData: openAuctions, teamShort: req.cookies.team});
+   res.render('pages/bid', {BidData: openAuctions, teamShort: req.cookies.team, playerID: req.params.playerID});
   });
  });
 
@@ -180,6 +282,10 @@ module.exports = function(app) {
  app.post('/nominate.html', urlencodedParser, function(req, res) {
   var unixtime = new Date().getTime() / 1000;
   console.log('debug bid4');
+  req.body.firstName = req.body.firstName.replace(/\s+/g,"");
+  req.body.firstName = req.body.firstName.charAt(0).toUpperCase() + req.body.firstName.slice(1);
+  req.body.lastName = req.body.lastName.replace(/\s+/g,"");
+  req.body.lastName = req.body.lastName.charAt(0).toUpperCase() + req.body.lastName.slice(1);
   new Bid({
    pos: req.body.pos,
    secPos: req.body.posSec,
