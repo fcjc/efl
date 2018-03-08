@@ -4,7 +4,7 @@
  </head>
  <body>
   <h1>EFL 2018 Nomination page</h1>
-  <form action="/nominate.html" method="post">
+  <form name="nominate_form" action="/nominate.html" method="post" onsubmit="return validateForm()">
    <input name="team" type="hidden" value="<%= teamShort %>">
   Pos:&nbsp;
   <select name="pos">
@@ -40,5 +40,21 @@
   <br>
   <input type="submit" name="submit" value="Nominate Player">
   </form>
+
+  <script type="text/javascript">
+   function validateForm() {
+    var a=document.forms["nominate_form"]["firstName"].value;
+    var b=document.forms["nominate_form"]["lastName"].value;
+    var c=document.forms["nominate_form"]["bid"].value;
+    if (a==null || a=="" || b==null || b=="") {
+     alert("Name is blank, please try again");
+     return false;
+    }
+    if (c < 1) {
+     alert("Bid cannot be 0");
+     return false;
+    }
+   }
+  </script>
  </body>
 </html>

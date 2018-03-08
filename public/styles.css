@@ -1,17 +1,22 @@
 .wrapper {
  grid-template: 
   "teaminfo teaminfo teaminfo" 180px
-  "activitylog allauction allauction" 300px
-  "activitylog allauction allauction" 300px / 275px 1fr 1fr;
+  "activitylog allauction allauction" 550px
+  "activitylog allauction allauction" 550px / 275px 1fr 1fr;
  display: grid;
- height: 500px;
+ height: 730px;
+ background-color: #000;
+ color: #FFF;
 }
 activitylog {
  grid-area: activitylog;
  overflow: auto;
+ height: 550px;
 }
 allauction {
  grid-area: allauction;
+ overflow: auto;
+ height: 550px;
 }
 h1 {
  clear: both;
@@ -29,9 +34,33 @@ teaminfo {
  font-size: 16px;
 }
 
+.activitylog {
+ padding: 0px 10px;
+}
+.activitylog .label {
+ padding: 0px 0px 15px 0px;
+}
+.activitylog .log_item {
+ padding: 4px 0px;
+ font-weight: bold;
+}
+.activitylog .log_item .time {
+ padding: 0px 0px 0px 15px;
+ font-weight: normal;
+}
+.activitylog .log_item.nominate {
+ color: #009933;
+}
+.activitylog .log_item.close {
+ color: #E60000;
+}
+.allauction h1 {
+ clear: both;
+ padding-left: 10px;
+}
 .auctionboard {
  clear: both;
- padding-top: 10px;
+ padding: 10px;
  display: grid;
  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
  grid-gap: 5px;
@@ -46,7 +75,7 @@ teaminfo {
 
 .closedboard {
  clear:both;
- padding-top: 10px;
+ padding: 10px;
  display: grid;
  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
  grid-gap: 5px;
@@ -58,16 +87,32 @@ teaminfo {
  padding: 5px;
  border: 1px solid #666;
 }
-
 .playername {
  font-size: 21px;
- border-bottom: 1px solid #666;
+ color: #FFFF00;
+ font-weight: bold;
+ padding-bottom: 3px;
+ border-bottom: 1px dotted #FFFF00;
 }
-.bid {
- font-size: 18px;
+a.playername {
+ font-size: 21px;
+ color: #FF9900;
+ font-weight: bold;
+ padding-bottom: 5px;
+ border-bottom: 0px solid #666;
 }
-.time {
+a:hover.playername {
+ color: #FFB84D;
+}
+.auctionplayer .bid, .closedplayer .bid {
+ font-size: 19px;
+ font-weight: bold;
+ color: #FFFF00;
+ padding: 2px 0px;
+}
+.auctionplayer .time, .closedplayer .time {
  font-size: 13px;
+ font-weight: normal;
 }
 
 INPUT.bid {

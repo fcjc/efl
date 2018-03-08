@@ -281,7 +281,6 @@ module.exports = function(app) {
 
  app.post('/nominate.html', urlencodedParser, function(req, res) {
   var unixtime = new Date().getTime() / 1000;
-  console.log('debug bid4');
   req.body.firstName = req.body.firstName.replace(/\s+/g,"");
   req.body.firstName = req.body.firstName.charAt(0).toUpperCase() + req.body.firstName.slice(1);
   req.body.lastName = req.body.lastName.replace(/\s+/g,"");
@@ -303,7 +302,6 @@ module.exports = function(app) {
    }
    console.log(req.body.pos + ' ' + req.body.firstName + ' ' + req.body.lastName + ' nominated');
   });
-  console.log('debug bid5');
 
   return res.redirect('/auction_board.html');
   //res.render('pages/bid_confirm', {Player: req.body.player, Team: req.body.team, Bid: req.body.bid});
