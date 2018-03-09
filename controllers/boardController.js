@@ -90,11 +90,8 @@ module.exports = function(app) {
    for (var i = 0; i < 12; i++) {
     if (teamdata[i].shortName == req.cookies.team) {
      curTeamLastLogin = teamdata[i].lastLogin;
-     Team.where({ shortName: req.cookies.team }).update({ $set: {last2ndLogin: teamdata[i].lastLogin, lastLogin: unixtime}}, function(err) {
-      console.log(req.cookies.team + ' has accessed the auctionboard: ' + new Date(unixtime * 1000));
-     });
     }
-    tempBudget.push([teamdata[i].shortName, teamdata[i].startBudget, teamdata[i].availBudget, teamdata[i].availBudget]);
+    tempBudget.push([teamdata[i].shortName, teamdata[i].startBudget, teamdata[i].availBudget, teamdata[i].ifWonAllBudget]);
    }
    //console.log(tempBudget);
 
@@ -129,6 +126,7 @@ module.exports = function(app) {
      }
      if (curPlayer !== closedPlayer) {
       openAuctions.push(newData);
+      /*
       if (curPlayer !== prevPlayer) {
        for (var i = 0; i < 12; i++) {
         if (tempBudget[i][0] == newData.team) {
@@ -137,6 +135,7 @@ module.exports = function(app) {
         }
        }
       }
+      */
       prevPlayer = curPlayer;
      } else {
       closedAuctions.push(newData);
@@ -152,6 +151,12 @@ module.exports = function(app) {
       return (a[0] > b[0]) ? -1 : 1;
      }
     }
+
+    //Team.where({ shortName: req.cookies.team }).update({ $set: {last2ndLogin: curTeamLastLogin, lastLogin: unixtime, rosterCountTemp: curBids}}, function(err) {
+    Team.where({ shortName: req.cookies.team }).update({ $set: {last2ndLogin: curTeamLastLogin, lastLogin: unixtime}}, function(err) {
+     console.log(req.cookies.team + ' has accessed the auctionboard: ' + new Date(unixtime * 1000));
+    });
+ 
 
     //console.log(tempBudget);
     res.render('pages/auction_board', {BidData: openAuctions, closed: closedAuctions, budget: tempBudget, activityData: tickerLog, lastLogin: curTeamLastLogin});
@@ -218,57 +223,76 @@ module.exports = function(app) {
    var playerPos = [playerInfo[0], ''];;
   }
 
-  /* is this the bug!!!!
-  //Bid check not live yet
+  // is this the bug!!!!
+  //Bid check
   Team.findOne({ shortName: req.body.team }, function(err, data) {
    if (err) {
     console.log('error! app.post-bid');
     return res.redirect('/login.html');
    }
-   console.log('debug bid2');
-   if (req.body.bid > data.ifWonAllBudget) {
-    console.log('Cannot afford bid of ' + req.body.bid);
+   console.log('checking bid, found team ' + data.shortName);
+   var highBidAllowed = data.ifWonAllBudget - (24 - data.rosterCountTemp);
+   if (req.body.bid > highBidAllowed) {
+    console.log('Cannot afford bid of ' + req.body.bid + ' because highest bid allowed is: ' + highBidAllowed);
+    return res.redirect('/biderror.html/cannot%20afford%20bid');
    }
-   console.log('debug bid2end');
-  });
-  */
+//   console.log('debug bid2end');
+  //
 
-  Bid.find({pos: playerPos[0], firstName: playerInfo[1], lastName: playerInfo[2]}, null, {sort: {bid: -1}}, function(err, data) {
-   if (err) {
-    console.log('error! app.post-bid bid.find');
-    return res.redirect('/login.html');
-   }
-   console.log('debug bid3');
-   console.log('this bid is for ' + req.body.player + ' for the amount ' + req.body.bid + ' from team:' + req.body.team);
-   if (req.body.bid > data[0].bid) {
-    console.log('debug bid3end');
-    var unixtime = new Date().getTime() / 1000;
-    new Bid({ 
-     pos: playerPos[0],
-     secPos: playerPos[1],
-     firstName: playerInfo[1],
-     lastName: playerInfo[2],
-     bid: req.body.bid,
-     team: req.body.team,
-     bidTime: unixtime,
-     nominate: 0,
-     close: 0,
-    }).save(function (err) {
-    if (err) console.log(err);
-     console.log(req.body.player + " bid added");
-    });
-    return res.redirect('/auction_board.html');
-   } else {
-    console.log('debug bid3end2');
-    console.log(data[0].lastName + ' bid too small');
-    return res.redirect('/biderror.html');
-   }
+   Bid.find({pos: playerPos[0], firstName: playerInfo[1], lastName: playerInfo[2]}, null, {sort: {bid: -1}}, function(err, data) {
+    if (err) {
+     console.log('error! app.post-bid bid.find');
+     return res.redirect('/login.html');
+    }
+    console.log('this bid is for ' + req.body.player + ' for the amount ' + req.body.bid + ' from team:' + req.body.team);
+    if (req.body.bid > data[0].bid) {
+     var unixtime = new Date().getTime() / 1000;
+     new Bid({ 
+      pos: playerPos[0],
+      secPos: playerPos[1],
+      firstName: playerInfo[1],
+      lastName: playerInfo[2],
+      bid: req.body.bid,
+      team: req.body.team,
+      bidTime: unixtime,
+      nominate: 0,
+      close: 0,
+     }).save(function (err) {
+     if (err) console.log(err);
+      console.log(req.body.player + " bid added");
+     });
+
+     //update team db for rosterCountTemp and ifWonAllBudget
+     Team.where({ shortName: req.body.team }).update({ $inc: {rosterCountTemp: +1, ifWonAllBudget: -(req.body.bid)}}, function(err) {
+      if (err) {
+       console.log('error! app.post-bid team.where add');
+       return res.redirect('/login.html');
+      }
+     console.log(req.body.team + ' has rosterCountTemp added 1 and ifWonAllBudget deducted by ' + req.body.bid);
+     });
+
+     //team who lost the highest bidder needs to be updated too
+     Team.where({ shortName: data[0].team }).update({ $inc: {rosterCountTemp: -1, ifWonAllBudget: +(data[0].bid)}}, function(err) {
+      if (err) {
+       console.log('error! app.post-bid team.where subtract');
+       return res.redirect('/login.html');
+      }
+      console.log(data[0].team + ' has rosterCountTemp subtracted 1 and ifWonAllBudget added by ' + data[0].bid);
+     });
+
+     return res.redirect('/auction_board.html');
+    } else {
+     console.log(data[0].lastName + ' bid too small');
+     return res.redirect('/biderror.html/bid%20too%20small%20');
+    }
+   });
+
   });
   //res.render('pages/bid_confirm', {Player: req.body.player, Team: req.body.team, Bid: req.body.bid});
  });
 
- app.get('/biderror.html', function(req, res) {
-  res.render('pages/biderror', {errmsg: 'bid too small'});
+ app.get('/biderror.html/:errmsg', function(req, res) {
+  res.render('pages/biderror', {errmsg: req.params.errmsg});
  });
 
  app.get('/nominate.html', function(req, res) {
@@ -277,6 +301,33 @@ module.exports = function(app) {
   } else {
    return res.redirect('/login.html');
   }
+ });
+
+ app.get('/budget.html', function(req, res) {
+  if (!req.cookies.team) {
+   return res.redirect('/login.html');
+  }
+  var unixtime = new Date().getTime() / 1000;
+  var curTeamLastLogin;
+
+  var tempBudget = [];
+  Team.find({}, null, {sort: {shortName: 1}}, function(err, teamdata) {
+   if (err) {
+    console.log('error! app.get-budget');
+    return res.redirect('/login.html');
+   }
+   for (var i = 0; i < 12; i++) {
+    if (teamdata[i].shortName == req.cookies.team) {
+     curTeamLastLogin = teamdata[i].lastLogin;
+     Team.where({ shortName: req.cookies.team }).update({ $set: {last2ndLogin: teamdata[i].lastLogin, lastLogin: unixtime}}, function(err) {
+      console.log(req.cookies.team + ' has accessed the budget page: ' + new Date(unixtime * 1000));
+     });
+    }
+    tempBudget.push([teamdata[i].shortName, teamdata[i].startBudget, teamdata[i].availBudget, teamdata[i].ifWonAllBudget]);
+   }
+
+   res.render('pages/budget', {budget: tempBudget});
+  });
  });
 
  app.post('/nominate.html', urlencodedParser, function(req, res) {
@@ -303,8 +354,48 @@ module.exports = function(app) {
    console.log(req.body.pos + ' ' + req.body.firstName + ' ' + req.body.lastName + ' nominated');
   });
 
+  Team.where({ shortName: req.body.team }).update({ $inc: {rosterCountTemp: +1, ifWonAllBudget: -(req.body.bid)}}, function(err) {
+   if (err) {
+    console.log('error! app.post-nominate team.where');
+    return res.redirect('/login.html');
+   }
+   console.log(req.body.team + ' has rosterCountTemp added 1 and ifWonAllBudget deducted by ' + req.body.bid);
+  });
+
+
   return res.redirect('/auction_board.html');
   //res.render('pages/bid_confirm', {Player: req.body.player, Team: req.body.team, Bid: req.body.bid});
+ });
+
+ app.get('/closed_board.html', function(req, res) {
+  if (!req.cookies.team) {
+   return res.redirect('/login.html');
+  }
+
+   Bid.find({}, null, {sort: {lastName: 1, bid: -1}}, function(err, data) {
+   if (err) {
+    console.log('error! app.get-closed_board bid.find');
+    return res.redirect('/login.html');
+   }
+    var closedAuctions = [];
+    var curPlayer;
+    var closedPlayer;
+    var prevPlayer;
+    data.forEach(function(newData) {
+     curPlayer = newData.pos + newData.firstName + newData.lastName;
+
+     if (newData.close) {
+      closedPlayer = curPlayer;
+     }
+     if (curPlayer !== closedPlayer) {
+      prevPlayer = curPlayer;
+     } else {
+      closedAuctions.push(newData);
+     }
+    });
+
+    res.render('pages/closed_board', {closed: closedAuctions});
+   });
  });
 
  app.get('/close_check.html', function(req, res) {

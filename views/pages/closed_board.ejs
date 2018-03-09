@@ -1,0 +1,58 @@
+<html>
+ <head>
+  <% include ../partials/head.ejs %>
+ </head>
+ <body>
+
+  <% var posDisp %>
+  <% var curPlayer %>
+  <% var nextPlayer %>
+  <h1>Closed Auctions</h1>
+  <div class="closedboardpage">
+   <div id="test" class="closedplayer">
+    <% for (var i = 0; i < closed.length; i++) { %>
+     <% if (closed[i].secPos) {
+      posDisp = closed[i].pos + '/' + closed[i].secPos;
+     } else {
+      posDisp = closed[i].pos;
+     } %>
+     <% curPlayer = posDisp + ' ' + closed[i].firstName + ' ' + closed[i].lastName; %>
+     <% if (curPlayer !== nextPlayer) { %>
+      <% if (i == 0) { %>
+       <span class="playername"><%= curPlayer %></span>
+      <% } else { %>
+       </div><div id="test" class="closedplayer"><span class="playername"><%= curPlayer %></span>
+      <% } %>
+     <% } %>
+     <span class="bid"><span class="time">
+      <script>
+       var date = new Date(<%= closed[i].bidTime %> *1000);
+       //var year = date.getFullYear();
+       var month = date.getMonth() + 1;
+       var day = date.getDate();
+       var ampm = 'AM';
+       var hours = date.getHours();
+       if (hours > 12) {
+        hours = hours - 12;
+        ampm = 'PM';
+       }
+       if (hours == 0) {
+        hours = 12;
+       }
+       var minutes = "0" + date.getMinutes();
+       var seconds = "0" + date.getSeconds();
+
+       // Will display time in 10:30:23 format
+       var formattedTime = month + '/' + day + ' - ' + hours + ':' + minutes.substr(-2) + ampm;
+       document.write(formattedTime);
+      </script>
+      </span>
+     <%= closed[i].team %> - <%= closed[i].bid %></span>
+     <% nextPlayer = curPlayer %>
+    <% } %>
+   </div>
+
+  </div>
+
+ </body>
+</html>

@@ -1,3 +1,38 @@
+body {
+ background-color: #000000;
+ color: #FFFFFF;
+}
+nav A {
+ xcolor: #FF9900;
+}
+nav A:hover {
+ xcolor: #FFB84D;
+}
+ul {
+ list-style-type: none;
+ margin: 0;
+ padding: 0;
+ overflow: hidden;
+ background-color: #23629F;
+}
+
+li {
+ float: left;
+}
+
+li a {
+ color: #FF9900;
+ font-weight: bold;
+ display: block;
+ text-align: center;
+ padding: 8px;
+ xtext-decoration: none;
+}
+
+li a:hover {
+ color: #FFB84D;
+ background-color: #000000;
+}
 .wrapper {
  grid-template: 
   "teaminfo teaminfo teaminfo" 180px
@@ -5,8 +40,6 @@
   "activitylog allauction allauction" 550px / 275px 1fr 1fr;
  display: grid;
  height: 730px;
- background-color: #000;
- color: #FFF;
 }
 activitylog {
  grid-area: activitylog;
@@ -24,13 +57,25 @@ h1 {
 teaminfo {
  grid-area: teaminfo;
 }
-.teaminfo div {
- font-size: 20px;
- display: flex;
- flex-direction: column;
- border: 1px solid #666;
+li.phone {
+ display: none;
+}
+.teaminfo {
  float: left;
- padding: 5px;
+ overflow: auto;
+ white-space: nowrap;
+}
+.teaminfopage {
+ float: left;
+}
+.teaminfo h2, .teaminfo .label, .teaminfopage h2, .teaminfopage .label {
+ padding-left: 5px;
+}
+.teaminfo div, .teaminfopage div {
+ font-size: 20px;
+ display: inline-block;
+ border: 1px solid #666;
+ padding: 3px;
  font-size: 16px;
 }
 
@@ -49,10 +94,10 @@ teaminfo {
  font-weight: normal;
 }
 .activitylog .log_item.nominate {
- color: #009933;
+ color: #B3FFB3;
 }
 .activitylog .log_item.close {
- color: #E60000;
+ color: #FFB3CC;
 }
 .allauction h1 {
  clear: both;
@@ -73,12 +118,13 @@ teaminfo {
  border: 1px solid #666;
 }
 
-.closedboard {
+.closedboard, .closedboardpage {
  clear:both;
  padding: 10px;
  display: grid;
  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
  grid-gap: 5px;
+ background-color: #000000;
 }
 .closedplayer {
  display: grid;
@@ -89,10 +135,11 @@ teaminfo {
 }
 .playername {
  font-size: 21px;
- color: #FFFF00;
+ color: #FFFFFF;
+ //was #FFFF00
  font-weight: bold;
  padding-bottom: 3px;
- border-bottom: 1px dotted #FFFF00;
+ border-bottom: 1px dotted #FFFFFF;
 }
 a.playername {
  font-size: 21px;
@@ -107,7 +154,7 @@ a:hover.playername {
 .auctionplayer .bid, .closedplayer .bid {
  font-size: 19px;
  font-weight: bold;
- color: #FFFF00;
+ color: #FFFFFF;
  padding: 2px 0px;
 }
 .auctionplayer .time, .closedplayer .time {
@@ -117,4 +164,68 @@ a:hover.playername {
 
 INPUT.bid {
  width: 60px;
+}
+
+@media (max-width: 767px) {
+ .wrapper {
+  grid-template:
+   "teaminfo " 90px
+   "allauction" 550px / auto auto;
+  display: grid;
+  height: auto;
+ }
+ activitylog {
+  display: none;
+ }
+ allauction {
+  grid-area: allauction;
+  overflow: auto;
+  height: auto;
+ }
+ li.desktop {
+  display: none;
+ }
+ li.tablet {
+  display: list-item;
+ }
+ .teaminfo {
+  padding-top: 5px;
+ }
+ .teaminfo div {
+  font-size: 2.1vw;
+ }
+ .teaminfo .label, .teaminfo h2 {
+  display: none;
+ }
+ .closedboard, .closedheading {
+  display: none;
+ }
+}
+@media (max-width: 479px) {
+ .wrapper {
+  grid-template:
+   "allauction" auto / auto;
+  display: grid;
+  height: auto;
+ }
+ activitylog {
+  display: none;
+ }
+ allauction {
+  grid-area: allauction;
+  overflow: auto;
+  height: auto;
+ }
+ teaminfo {
+  display: none;
+ }
+ .closedboard, .closedheading {
+  display: none;
+ }
+ li.desktop {
+  display: none;
+ }
+ li.phone {
+  display: list-item;
+ }
 }

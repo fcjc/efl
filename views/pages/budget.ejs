@@ -1,0 +1,27 @@
+<html>
+ <head>
+  <% include ../partials/head.ejs %>
+ </head>
+ <body>
+
+  <div class="teaminfopage">
+   <h2>Team Budget</h2>
+   <div class="label">
+    Team<br>
+    Start:<br>
+    Avail:<br>
+    IfWonAll:
+   </div>
+   <% for (var i = 0; i < 12; i++) { %>
+    <div>
+    <%= budget[i][0] %><br>
+    <%= budget[i][1] %><br>
+    <%= budget[i][2] %><br>
+    <%= budget[i][3] %>
+    </div>
+   <% } %>
+  </div>
+
+
+ </body>
+</html>

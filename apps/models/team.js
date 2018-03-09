@@ -11,6 +11,7 @@ var TeamSchema = new mongoose.Schema({
  availBudget: Number,
  ifWonAllBudget: Number,
  rosterCount: Number,
+ rosterCountTemp: Number,
  possibleRoster: Number,
  lastLogin: Number,
  last2ndLogin: Number,
