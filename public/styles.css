@@ -162,46 +162,23 @@ a:hover.playername {
  font-weight: normal;
 }
 
-.nomination_page {
+.reg_page, .login_page, .nomination_page, .bid_page {
  padding: 10px;
 }
-.nomination_page .heading {
+.reg_page, .login_page .heading, .nomination_page .heading, .bid_page .heading {
  font-size: 20px;
 }
-ul.nominate_ul {
+ul.form_page_ul {
  background-color: #000000;
 }
-.nominate_ul li {
- clear: both;
-    padding: 0;
-    display: block;
-    list-style: none;
-    margin: 10px 0 0 0;
-}
-.nominate_ul label{
-    margin:0 0 3px 0;
-    padding:0px;
-    display:block;
-    font-weight: bold;
-}
-
-.bid_page {
- padding: 10px;
-}
-.bid_page .heading {
- font-size: 20px;
-}
-ul.bid_ul {
- background-color: #000000;
-}
-.bid_ul li {
+.form_page_ul li {
  clear: both;
  padding: 0;
  display: block;
  list-style: none;
  margin: 10px 0 0 0;
 }
-.bid_ul label{
+.form_page_ul label{
  margin:0 0 3px 0;
  padding:0px;
  display:block;
