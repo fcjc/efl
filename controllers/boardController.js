@@ -332,39 +332,53 @@ module.exports = function(app) {
 
  app.post('/nominate.html', urlencodedParser, function(req, res) {
   var unixtime = new Date().getTime() / 1000;
-  req.body.firstName = req.body.firstName.replace(/\s+/g,"");
-  req.body.firstName = req.body.firstName.charAt(0).toUpperCase() + req.body.firstName.slice(1);
-  req.body.lastName = req.body.lastName.replace(/\s+/g,"");
-  req.body.lastName = req.body.lastName.charAt(0).toUpperCase() + req.body.lastName.slice(1);
-  new Bid({
-   pos: req.body.pos,
-   secPos: req.body.posSec,
-   firstName: req.body.firstName,
-   lastName: req.body.lastName,
-   bid: req.body.bid,
-   team: req.body.team,
-   bidTime: unixtime,
-   nominate: true,
-   close: 0,
-  }).save(function (err) {
+
+  Team.findOne({ shortName: req.body.team }, function(err, data) {
    if (err) {
-    console.log('error! app.post-nominate');
+    console.log('error! app.post-bid');
     return res.redirect('/login.html');
    }
-   console.log(req.body.pos + ' ' + req.body.firstName + ' ' + req.body.lastName + ' nominated');
-  });
-
-  Team.where({ shortName: req.body.team }).update({ $inc: {rosterCountTemp: +1, ifWonAllBudget: -(req.body.bid)}}, function(err) {
-   if (err) {
-    console.log('error! app.post-nominate team.where');
-    return res.redirect('/login.html');
+   console.log('checking nomination for team ' + data.shortName);
+   var highBidAllowed = data.ifWonAllBudget - (24 - data.rosterCountTemp);
+   if (req.body.bid > highBidAllowed) {
+    console.log('Cannot afford nomination  of ' + req.body.bid + ' because highest bid allowed is: ' + highBidAllowed);
+    return res.redirect('/biderror.html/cannot%20afford%20nomination');
    }
-   console.log(req.body.team + ' has rosterCountTemp added 1 and ifWonAllBudget deducted by ' + req.body.bid);
+
+   req.body.firstName = req.body.firstName.replace(/\s+/g,"");
+   req.body.firstName = req.body.firstName.charAt(0).toUpperCase() + req.body.firstName.slice(1);
+   req.body.lastName = req.body.lastName.replace(/\s+/g,"");
+   req.body.lastName = req.body.lastName.charAt(0).toUpperCase() + req.body.lastName.slice(1);
+   new Bid({
+    pos: req.body.pos,
+    secPos: req.body.posSec,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    bid: req.body.bid,
+    team: req.body.team,
+    bidTime: unixtime,
+    nominate: true,
+    close: 0,
+   }).save(function (err) {
+    if (err) {
+     console.log('error! app.post-nominate');
+     return res.redirect('/login.html');
+    }
+    console.log(req.body.pos + ' ' + req.body.firstName + ' ' + req.body.lastName + ' nominated');
+   });
+
+   Team.where({ shortName: req.body.team }).update({ $inc: {rosterCountTemp: +1, ifWonAllBudget: -(req.body.bid)}}, function(err) {
+    if (err) {
+     console.log('error! app.post-nominate team.where');
+     return res.redirect('/login.html');
+    }
+    console.log(req.body.team + ' has rosterCountTemp added 1 and ifWonAllBudget deducted by ' + req.body.bid);
+   });
+
+
+   return res.redirect('/auction_board.html');
+   //res.render('pages/bid_confirm', {Player: req.body.player, Team: req.body.team, Bid: req.body.bid});
   });
-
-
-  return res.redirect('/auction_board.html');
-  //res.render('pages/bid_confirm', {Player: req.body.player, Team: req.body.team, Bid: req.body.bid});
  });
 
  app.get('/closed_board.html', function(req, res) {
