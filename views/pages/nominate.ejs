@@ -3,39 +3,54 @@
   <% include ../partials/head.ejs %>
  </head>
  <body>
-  <h1>EFL 2018 Nomination page</h1>
-  <form name="nominate_form" action="/nominate.html" method="post" onsubmit="return validateForm()">
-   <input name="team" type="hidden" value="<%= teamShort %>">
-  <span class="formlabel">Pos:</span>
-  <select name="pos">
-   <option value="C">C</option>
-   <option value="1B">1B</option>
-   <option value="2B">2B</option>
-   <option value="3B">3B</option>
-   <option value="SS">SS</option>
-   <option value="OF">OF</option>
-   <option value="DH">DH</option>
-   <option value="P">P</option>
-  </select>
-  
-  <span class="formlabel">Secondary Postion:</span>
-  <select name="posSec">
-   <option value="">-</option>
-   <option value="C">C</option>
-   <option value="1B">1B</option>
-   <option value="2B">2B</option>
-   <option value="3B">3B</option>
-   <option value="SS">SS</option>
-   <option value="OF">OF</option>
-  </select>
-  <span class="formlabel">First Name:</span>
-  <input type="text" name="firstName">
-  <span class="formlabel">Last Name:</span>
-  <input type="text" name="lastName">
-  <span class="formlabel">Bid:</span>
-  <input type="number" name="bid">
-  <input type="submit" name="submit" value="Nominate">
-  </form>
+  <div class="nomination_page">
+   <div class="heading">EFL 2018 Nomination page</div>
+   <form class="nominate_class="nominate_form" action="/nominate.html" method="post" onsubmit="return validateForm()">
+    <input name="team" type="hidden" value="<%= teamShort %>">
+    <ul class="nominate_ul">
+     <li>
+      <label>Pos:</label>
+      <select name="pos">
+       <option value="C">C</option>
+       <option value="1B">1B</option>
+       <option value="2B">2B</option>
+       <option value="3B">3B</option>
+       <option value="SS">SS</option>
+       <option value="OF">OF</option>
+       <option value="DH">DH</option>
+       <option value="P">P</option>
+      </select>
+     </li>
+     <li>
+      <label>Secondary Postion:</label>
+      <select name="posSec">
+       <option value="">-</option>
+       <option value="C">C</option>
+       <option value="1B">1B</option>
+       <option value="2B">2B</option>
+       <option value="3B">3B</option>
+       <option value="SS">SS</option>
+       <option value="OF">OF</option>
+      </select>
+     </li>
+     <li>
+      <label>First Name:</label>
+      <input type="text" name="firstName">
+     </li>
+     <li>
+      <label>Last Name:</label>
+      <input type="text" name="lastName">
+     </li>
+     <li>
+      <label>Bid:</label>
+      <input type="number" name="bid">
+     </li>
+     <li>
+      <input type="submit" name="submit" value="Nominate">
+     </li>
+    </ul>
+   </form>
+  </div>
 
   <script type="text/javascript">
    function validateForm() {

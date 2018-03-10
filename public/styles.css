@@ -162,27 +162,50 @@ a:hover.playername {
  font-weight: normal;
 }
 
-FORM {
- display: grid;
- grid-template-columns: auto 1fr;
- grid-gap: 10px;
+.nomination_page {
+ padding: 10px;
 }
-.formlabel {
- grid-column: 1 / 2;
+.nomination_page .heading {
+ font-size: 2vw;
 }
-SELECT {
- grid-column: 2 / 3;
- width: 50px;
+ul.nominate_ul {
+ background-color: #000000;
 }
-SELECT.bidselect {
- width: 220px;
+.nominate_ul li {
+ clear: both;
+    padding: 0;
+    display: block;
+    list-style: none;
+    margin: 10px 0 0 0;
 }
-INPUT {
- grid-column: 2 / 3;
- width: 100px;
+.nominate_ul label{
+    margin:0 0 3px 0;
+    padding:0px;
+    display:block;
+    font-weight: bold;
 }
-INPUT.bid {
-  width: 60px;
+
+.bid_page {
+ padding: 10px;
+}
+.bid_page .heading {
+ font-size: 2.2vw;
+}
+ul.bid_ul {
+ background-color: #000000;
+}
+.bid_ul li {
+ clear: both;
+ padding: 0;
+ display: block;
+ list-style: none;
+ margin: 10px 0 0 0;
+}
+.bid_ul label{
+ margin:0 0 3px 0;
+ padding:0px;
+ display:block;
+ font-weight: bold;
 }
 
 @media (max-width: 767px) {

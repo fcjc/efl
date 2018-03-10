@@ -3,38 +3,45 @@
   <% include ../partials/head.ejs %>
  </head>
  <body>
-  <h1>EFL 2018 Bidding page</h1>
-  <form action="/bid.html" method="post">
-   <input name="team" type="hidden" value="<%= teamShort %>">
-
-  Player:&nbsp;
-   <select class="bidselect" name="player">
-  <% var posDisp;
-  var curPlayer;
-  var nextPlayer;
-  %>
-  <% for (var i = 0; i < BidData.length; i++) { %>
-    <% if (BidData[i].secPos) {
-     posDisp = BidData[i].pos + '/' + BidData[i].secPos;
-    } else {
-     posDisp = BidData[i].pos;
-    } %>
-    <% curPlayer = posDisp + ' ' + BidData[i].firstName + ' ' + BidData[i].lastName; %>
-    <% if (curPlayer !== nextPlayer) { %>
-      <option value="<%= curPlayer %>" 
-       <% if (curPlayer == playerID) { %>
-        selected
-       <% } %> 
-      ><%= curPlayer %> - <%= BidData[i].team %> <%= BidData[i].bid %></option>
-    <% } %>
-    <% nextPlayer = curPlayer %>
-  <% } %>
-   </select>
-
-
-   Bid:&nbsp;
-   <input class="bid" type="number" name="bid">
-   <input type="submit" name="submit" value="Place Bid">
-  </form>
+  <div class="bid_page">
+   <div class="heading">EFL 2018 Bidding page</div>
+   <form action="/bid.html" method="post">
+    <input name="team" type="hidden" value="<%= teamShort %>">
+    <ul class="bid_ul">
+     <li>
+      <label>Player:</label>
+      <select class="bidselect" name="player">
+       <% var posDisp;
+        var curPlayer;
+        var nextPlayer;
+       %>
+       <% for (var i = 0; i < BidData.length; i++) { %>
+        <% if (BidData[i].secPos) {
+         posDisp = BidData[i].pos + '/' + BidData[i].secPos;
+        } else {
+         posDisp = BidData[i].pos;
+        } %>
+        <% curPlayer = posDisp + ' ' + BidData[i].firstName + ' ' + BidData[i].lastName; %>
+        <% if (curPlayer !== nextPlayer) { %>
+         <option value="<%= curPlayer %>" 
+         <% if (curPlayer == playerID) { %>
+          selected
+         <% } %> 
+         ><%= curPlayer %> - <%= BidData[i].team %> <%= BidData[i].bid %></option>
+        <% } %>
+        <% nextPlayer = curPlayer %>
+       <% } %>
+      </select>
+     </li>
+     <li>
+      <label>Bid:</label>
+      <input class="bid" type="number" name="bid">
+     </li>
+     <li>    
+      <input type="submit" name="submit" value="Place Bid">
+     </li>
+    </ul>
+   </form>
+  </div>
  </body>
 </html>
