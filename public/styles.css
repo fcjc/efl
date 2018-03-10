@@ -166,7 +166,7 @@ a:hover.playername {
  padding: 10px;
 }
 .nomination_page .heading {
- font-size: 2vw;
+ font-size: 20px;
 }
 ul.nominate_ul {
  background-color: #000000;
@@ -189,7 +189,7 @@ ul.nominate_ul {
  padding: 10px;
 }
 .bid_page .heading {
- font-size: 2.2vw;
+ font-size: 20px;
 }
 ul.bid_ul {
  background-color: #000000;
