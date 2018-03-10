@@ -162,8 +162,27 @@ a:hover.playername {
  font-weight: normal;
 }
 
+FORM {
+ display: grid;
+ grid-template-columns: auto 1fr;
+ grid-gap: 10px;
+}
+.formlabel {
+ grid-column: 1 / 2;
+}
+SELECT {
+ grid-column: 2 / 3;
+ width: 50px;
+}
+SELECT.bidselect {
+ width: 220px;
+}
+INPUT {
+ grid-column: 2 / 3;
+ width: 100px;
+}
 INPUT.bid {
- width: 60px;
+  width: 60px;
 }
 
 @media (max-width: 767px) {

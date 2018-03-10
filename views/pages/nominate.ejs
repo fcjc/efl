@@ -6,7 +6,7 @@
   <h1>EFL 2018 Nomination page</h1>
   <form name="nominate_form" action="/nominate.html" method="post" onsubmit="return validateForm()">
    <input name="team" type="hidden" value="<%= teamShort %>">
-  Pos:&nbsp;
+  <span class="formlabel">Pos:</span>
   <select name="pos">
    <option value="C">C</option>
    <option value="1B">1B</option>
@@ -17,8 +17,8 @@
    <option value="DH">DH</option>
    <option value="P">P</option>
   </select>
-  <br>
-  Secondary Postion:&nbsp;
+  
+  <span class="formlabel">Secondary Postion:</span>
   <select name="posSec">
    <option value="">-</option>
    <option value="C">C</option>
@@ -28,17 +28,13 @@
    <option value="SS">SS</option>
    <option value="OF">OF</option>
   </select>
-  <br>
-  First Name:&nbsp;
+  <span class="formlabel">First Name:</span>
   <input type="text" name="firstName">
-  <br>
-  Last Name:&nbsp;
+  <span class="formlabel">Last Name:</span>
   <input type="text" name="lastName">
-  <br>
-  Bid:&nbsp;
+  <span class="formlabel">Bid:</span>
   <input type="number" name="bid">
-  <br>
-  <input type="submit" name="submit" value="Nominate Player">
+  <input type="submit" name="submit" value="Nominate">
   </form>
 
   <script type="text/javascript">
