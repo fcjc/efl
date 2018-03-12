@@ -67,6 +67,9 @@ module.exports = function(app) {
  });
 
  app.get('/login.html', function(req, res) {
+  if (req.cookies.team == 'MiLB') {
+   req.cookies.team = null;
+  }
   if (req.cookies.team) {
    return res.redirect('/auction_board.html');
   }
