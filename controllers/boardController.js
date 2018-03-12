@@ -295,14 +295,6 @@ module.exports = function(app) {
   res.render('pages/biderror', {errmsg: req.params.errmsg});
  });
 
- app.get('/nominate.html', function(req, res) {
-  if (req.cookies.team) {
-   res.render('pages/nominate', {teamShort: req.cookies.team});
-  } else {
-   return res.redirect('/login.html');
-  }
- });
-
  app.get('/budget.html', function(req, res) {
   if (!req.cookies.team) {
    return res.redirect('/login.html');
@@ -330,6 +322,14 @@ module.exports = function(app) {
   });
  });
 
+ app.get('/nominate.html', function(req, res) {
+  if (req.cookies.team) {
+   res.render('pages/nominate', {teamShort: req.cookies.team});
+  } else {
+   return res.redirect('/login.html');
+  }
+ });
+
  app.post('/nominate.html', urlencodedParser, function(req, res) {
   var unixtime = new Date().getTime() / 1000;
 
@@ -338,6 +338,7 @@ module.exports = function(app) {
     console.log('error! app.post-bid');
     return res.redirect('/login.html');
    }
+
    console.log('checking nomination for team ' + data.shortName);
    var highBidAllowed = data.ifWonAllBudget - (24 - data.rosterCountTemp);
    if (req.body.bid > highBidAllowed) {
@@ -349,34 +350,48 @@ module.exports = function(app) {
    req.body.firstName = req.body.firstName.charAt(0).toUpperCase() + req.body.firstName.slice(1);
    req.body.lastName = req.body.lastName.replace(/\s+/g,"");
    req.body.lastName = req.body.lastName.charAt(0).toUpperCase() + req.body.lastName.slice(1);
-   new Bid({
-    pos: req.body.pos,
-    secPos: req.body.posSec,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    bid: req.body.bid,
-    team: req.body.team,
-    bidTime: unixtime,
-    nominate: true,
-    close: 0,
-   }).save(function (err) {
+
+   //check to see if player is already nominated
+   Bid.findOne({ lastName: req.body.lastName, firstName: req.body.firstName }, function(err, bidcheck) {
     if (err) {
-     console.log('error! app.post-nominate');
+     console.log('error! app.post-nominate bid.findOne');
      return res.redirect('/login.html');
     }
-    console.log(req.body.pos + ' ' + req.body.firstName + ' ' + req.body.lastName + ' nominated');
-   });
+    if (bidcheck.lastName) {
+     console.log(bidcheck.lastName + ' has already been nominated');
+     return res.redirect('/biderror.html/error!%20Player%20has%20already%20been%20nominated');
+    } else {
+    
+     new Bid({
+      pos: req.body.pos,
+      secPos: req.body.posSec,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      bid: req.body.bid,
+      team: req.body.team,
+      bidTime: unixtime,
+      nominate: true,
+      close: 0,
+     }).save(function (err) {
+      if (err) {
+       console.log('error! app.post-nominate');
+       return res.redirect('/login.html');
+      }
+      console.log(req.body.pos + ' ' + req.body.firstName + ' ' + req.body.lastName + ' nominated');
+     });
 
-   Team.where({ shortName: req.body.team }).update({ $inc: {rosterCountTemp: +1, ifWonAllBudget: -(req.body.bid)}}, function(err) {
-    if (err) {
-     console.log('error! app.post-nominate team.where');
-     return res.redirect('/login.html');
+     Team.where({ shortName: req.body.team }).update({ $inc: {rosterCountTemp: +1, ifWonAllBudget: -(req.body.bid)}}, function(err) {
+      if (err) {
+       console.log('error! app.post-nominate team.where');
+       return res.redirect('/login.html');
+      }
+      console.log(req.body.team + ' has rosterCountTemp added 1 and ifWonAllBudget deducted by ' + req.body.bid);
+     });
+
+
+     return res.redirect('/auction_board.html');
     }
-    console.log(req.body.team + ' has rosterCountTemp added 1 and ifWonAllBudget deducted by ' + req.body.bid);
    });
-
-
-   return res.redirect('/auction_board.html');
    //res.render('pages/bid_confirm', {Player: req.body.player, Team: req.body.team, Bid: req.body.bid});
   });
  });
