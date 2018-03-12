@@ -355,16 +355,16 @@ module.exports = function(app) {
    req.body.lastName = req.body.lastName.charAt(0).toUpperCase() + req.body.lastName.slice(1);
 
    //check to see if player is already nominated
-/*   Bid.findOne({ lastName: req.body.lastName, firstName: req.body.firstName }, function(err, bidcheck) {
+   Bid.findOne({ lastName: req.body.lastName, firstName: req.body.firstName }, function(err, bidcheck) {
     if (err) {
      console.log('error! app.post-nominate bid.findOne');
      return res.redirect('/login.html');
     }
-    if (bidcheck.lastName) {
+    if (bidcheck) {
      console.log(bidcheck.lastName + ' has already been nominated');
      return res.redirect('/biderror.html/error!%20Player%20has%20already%20been%20nominated');
     } else {
-*/    
+    
      new Bid({
       pos: req.body.pos,
       secPos: req.body.posSec,
@@ -394,8 +394,8 @@ module.exports = function(app) {
 
      return res.redirect('/auction_board.html');
 
-//    }
-//   });
+    }
+   });
 
   //res.render('pages/bid_confirm', {Player: req.body.player, Team: req.body.team, Bid: req.body.bid});
   });
