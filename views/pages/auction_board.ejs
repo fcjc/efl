@@ -54,9 +54,11 @@
        var day = date.getDate();
        var ampm = 'AM';
        var hours = date.getHours();
-       if (hours > 12) {
-        hours = hours - 12;
+       if (hours > 11) {
         ampm = 'PM';
+	if (hours > 12) {
+	 hours = hours - 12;
+	}
        }
        if (hours == 0) {
         hours = 12;
@@ -106,9 +108,11 @@
        var day = date.getDate();
        var ampm = 'AM';
        var hours = date.getHours();
-       if (hours > 12) {
-        hours = hours - 12;
+       if (hours > 11) {
         ampm = 'PM';
+	if (hours > 12) {
+	 hours = hours - 12;
+	}
        }
        if (hours == 0) {
         hours = 12;
@@ -155,9 +159,11 @@
        var day = date.getDate();
        var ampm = 'AM';
        var hours = date.getHours();
-       if (hours > 12) {
-        hours = hours - 12;
+       if (hours > 11) {
         ampm = 'PM';
+        if (hours > 12) {
+	 hours = hours - 12;
+	}
        }
        if (hours == 0) {
         hours = 12;

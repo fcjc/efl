@@ -187,10 +187,12 @@ ul.form_page_ul {
 
 @media (max-width: 767px) {
  .wrapper {
-  grid-template:
+  xgrid-template:
    "teaminfo " 90px
    "allauction" 550px / auto auto;
-  display: grid;
+  xdisplay: grid;
+  grid-template: none;
+  display: block;
   height: auto;
  }
  activitylog {
@@ -208,7 +210,7 @@ ul.form_page_ul {
   display: list-item;
  }
  .teaminfo {
-  padding-top: 5px;
+  padding: 5px 0px 10px 0px;
  }
  .teaminfo div {
   font-size: 2.1vw;
