@@ -84,6 +84,7 @@
   <% var posDisp = 'here' %>
   <% var curPlayer %>
   <% var nextPlayer %>
+  <% var curPlayerURL %>
   <h1>Auction Board</h1>
    <div class="auctionboard">
    <div class="auctionplayer">
@@ -94,11 +95,12 @@
       posDisp = BidData[i].pos;
      } %>
      <% curPlayer = posDisp + ' ' + BidData[i].firstName + ' ' + BidData[i].lastName; %>
+     <% curPlayerURL = encodeURIComponent(curPlayer); %>
      <% if (curPlayer !== nextPlayer) { %>
       <% if (i == 0) { %>
-       <a href="/bid.html/<%= curPlayer %>" class="playername"><%= curPlayer %></a>
+       <a href="/bid.html/<%= curPlayerURL %>" class="playername"><%= curPlayer %></a>
       <% } else { %>
-       </div><div class="auctionplayer"><a href="/bid.html/<%= curPlayer %>" class="playername"><%= curPlayer %></a>
+       </div><div class="auctionplayer"><a href="/bid.html/<%= curPlayerURL %>" class="playername"><%= curPlayer %></a>
       <% } %>
      <% } %>
      <span class="bid"><span class="time">

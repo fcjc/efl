@@ -434,6 +434,7 @@ module.exports = function(app) {
 
  app.get('/close_check.html', function(req, res) {
   Bid.find({}, null, {sort: {lastName: 1, bid: -1}}, function(err, data) {
+   var playersClosed = [];
    var curPlayer;
    var prevPlayer;
    var curTime = new Date().getTime() / 1000;
@@ -444,17 +445,17 @@ module.exports = function(app) {
      //console.log(curPlayer + ' ' + data.bidTime);
      if (curTime > (data.bidTime + oneDay)) {
       console.log('need to close ' + curPlayer);
+      playersClosed.push(data);
       Bid.where({ firstName: data.firstName, lastName: data.lastName, bidTime: data.bidTime }).update({ $set: {close: true}}, function(err, data2) {
        Team.where({ shortName: data.team }).update({ $inc: {availBudget: -(data.bid), rosterCount: +1}}, function(err, data3) {
-        console.log('closed ' + data.firstName + data.lastName);
-        console.log('deducted ' + data.bid + ' from ' + data.team); 
+        console.log('closed ' + data.firstName + data.lastName + ' - deducted ' + data.bid + ' from ' + data.team); 
        });
       });
      }
     }
     prevPlayer = curPlayer;
    });
-   res.render('pages/close', {BidData: data});
+   res.render('pages/close', {playersClosed: playersClosed});
   })
  });
 

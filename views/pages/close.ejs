@@ -6,19 +6,14 @@
   <h1>closing? Auction Board</h1>
   <% var posDisp %>
   <% var curPlayer %>
-  <% var nextPlayer %>
-  <div>
-  <% for (var i = 0; i < BidData.length; i++) { %>
-    <% if (BidData[i].secPos) { 
-     posDisp = BidData[i].pos + '/' + BidData[i].secPos;
+  <% for (var i = 0; i < playersClosed.length; i++) { %>
+    <% if (playersClosed[i].secPos) { 
+     posDisp = playersClosed[i].pos + '/' + playersClosed[i].secPos;
     } else {
-     posDisp = BidData[i].pos;
+     posDisp = playersClosed[i].pos;
     } %>
-    <% curPlayer = posDisp + ' ' + BidData[i].firstName + ' ' + BidData[i].lastName; %>
-    <% if ((curPlayer !== nextPlayer) && (!BidData[i].close)) { %>
-     </div><div><%= curPlayer %> <%= BidData[i].team %> - <%= BidData[i].bid %> <%= BidData[i].bidTime %>
-    <% } %>
-    <% nextPlayer = curPlayer %>
+    <% curPlayer = posDisp + ' ' + playersClosed[i].firstName + ' ' + playersClosed[i].lastName; %>
+    <div><%= curPlayer %> <%= playersClosed[i].team %> - <%= playersClosed[i].bid %> <%= playersClosed[i].bidTime %></div>
   <% } %>
   </div>
  </body>
